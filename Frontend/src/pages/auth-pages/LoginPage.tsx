@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
   const handleSignUp = () => console.log("Sign Up");
 
   return (
-    <div className="min-h-screen flex flex-col shadow-2xl max-w-md mx-auto px-4 sm:px-6">
+    <div className="min-h-screen flex flex-col md:shadow-2xl md:max-w-lg md:mx-auto px-4 sm:px-6">
       <div className="flex-1 flex flex-col justify-center py-12">
         {/* Logo */}
         <div className="flex justify-center mb-4">
@@ -23,10 +23,10 @@ const LoginPage: React.FC = () => {
 
         {/* Headings */}
         <h1 className="text-4xl font-bold text-center mb-1">StreakForce</h1>
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-4 mt-4 leading-snug">
+        <h2 className="text-4xl md:text-3xl font-bold text-center mb-4 mt-4 leading-snug">
           Welcome back!
         </h2>
-        <p className="text-gray-600 text-center text-xl sm:text-2xl md:text-3xl mb-8 leading-relaxed">
+        <p className="text-gray-600 text-center text-xl md:text-2xl md:mb-3 mb-8 leading-relaxed">
           Sign in to continue your streak
         </p>
 
