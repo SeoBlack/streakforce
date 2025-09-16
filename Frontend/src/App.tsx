@@ -1,13 +1,22 @@
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import AuthLayout from "./pages/auth-pages/Authlayout";
+import WelcomePage from "./pages/auth-pages/WellcomePage";
+import LoginPage from "./pages/auth-pages/LoginPage";
+
 function App() {
   return (
-    <>
-      <div className="text-2xl justify-center items-center h-screen flex">
-        <p className="text-amber-200">
-          Hello, This is the front end of our project <br />
-          <span className="text-blue-900 font-semibold">Streak-Force</span>
-        </p>
-      </div>
-    </>
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route index element={<WelcomePage />} />
+            <Route path="login" element={<LoginPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
