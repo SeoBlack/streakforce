@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   const location = useLocation();
   const [showFooter, setShowFooter] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const navItems = [
     { icon: Home, label: "Home", to: "/home" },
