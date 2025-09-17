@@ -4,7 +4,7 @@ import HabitsSection from "../../components/HabitsSection";
 // import Footer from "../../components/Footer";
 import { User } from "lucide-react";
 
-import { habits,  teamMembers } from "../../data";
+import { habits, teamMembers } from "../../data";
 
 const HomePage: React.FC = () => {
   const [members, setMembers] = useState<typeof teamMembers>([]);
@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col max-w-md mx-auto lg:max-w-lg">
+    <div className="min-h-screen bg-gray-50 flex flex-col w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="bg-white px-4 sm:px-6 py-4 sm:py-6">
         <div className="flex justify-between items-center">
