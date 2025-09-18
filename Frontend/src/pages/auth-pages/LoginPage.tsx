@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../assets/logo.svg";
-import LoginForm from "../../components/LoginForm";
+import AuthForm from "../../components/LoginForm";
 
 const LoginPage: React.FC = () => {
-  const handleLogin = (email: string, password: string) => {
-    console.log("Login:", email, password);
+  const [mode, setMode] = useState<"login" | "signup">("login");
+
+  const handleSubmit = (
+    email: string,
+    password: string,
+    confirmPassword?: string
+  ) => {
+    if (mode === "login") {
+      console.log("Login:", email, password);
+    } else {
+      console.log("Signup:", email, password, confirmPassword);
+    }
   };
+
   const handleForgotPassword = () => console.log("Forgot Password");
   const handleGoogleLogin = () => console.log("Google Login");
   const handleAppleLogin = () => console.log("Apple Login");
-  const handleSignUp = () => console.log("Sign Up");
+
+  const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
 
   return (
     <div className="min-h-screen flex flex-col md:shadow-2xl md:max-w-lg md:mx-auto px-4 sm:px-6">
@@ -24,19 +36,22 @@ const LoginPage: React.FC = () => {
         {/* Headings */}
         <h1 className="text-4xl font-bold text-center mb-1">StreakForce</h1>
         <h2 className="text-4xl md:text-3xl font-bold text-center mb-4 mt-4 leading-snug">
-          Welcome back!
+          {mode === "login" ? "Welcome back!" : "Create your account"}
         </h2>
         <p className="text-gray-600 text-center text-xl md:text-2xl md:mb-3 mb-8 leading-relaxed">
-          Sign in to continue your streak
+          {mode === "login"
+            ? "Sign in to continue your streak"
+            : "Sign up to start your streak"}
         </p>
 
-        {/* Login Form */}
-        <LoginForm
-          onLogin={handleLogin}
-          onForgotPassword={handleForgotPassword}
+        {/* Auth Form */}
+        <AuthForm
+          mode={mode}
+          onSubmit={handleSubmit}
+          onForgotPassword={mode === "login" ? handleForgotPassword : undefined}
           onGoogleLogin={handleGoogleLogin}
           onAppleLogin={handleAppleLogin}
-          onSignUp={handleSignUp}
+          onSwitchMode={toggleMode}
         />
       </div>
     </div>
