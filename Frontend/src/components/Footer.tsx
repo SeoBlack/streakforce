@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
   const navItems = [
     { icon: Home, label: "Home", to: "/home" },
     { icon: Users, label: "Teams", to: "/users" },
-    { icon: Plus, label: "Add" },
+    { icon: Plus, label: "Add", to: "/create-challenge" },
     { icon: TrendingUp, label: "Stats", to: "/stats" },
     { icon: User, label: "Profile", to: "/profile" },
   ];
