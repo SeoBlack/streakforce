@@ -1,7 +1,8 @@
-import { Settings, Edit3, Trophy } from "lucide-react";
+import { Settings, Edit3, Trophy, Users, Share2 } from "lucide-react";
 import ProgressComponent from "../../components/ProgressComponent";
 import HabitsSection from "../../components/HabitsSection";
 import { userData, habits } from "../../data";
+import Button from "../../components/Button";
 
 const ProfilePage: React.FC = () => {
   return (
@@ -47,6 +48,18 @@ const ProfilePage: React.FC = () => {
 
         <div className="px-4 pb-6 sm:px-6 lg:px-8">
           <HabitsSection title="All Habits" habit={habits} />
+        </div>
+        <div className="flex  justify-center">
+          <Button className="bg-color-1 m-4 px-8 py-5 gap-2">
+            <Users className="w-5 h-5" />
+            Join Team Challenge
+          </Button>
+        </div>
+        <div className=" mb-8 flex justify-center">
+          <Button className="bg-gray-200 py-5 m-4 gap-2 text-gray-700 hover:bg-gray-300">
+            <Share2 className="w-6 h-8" />
+            Share Progress
+          </Button>
         </div>
       </div>
     </div>
