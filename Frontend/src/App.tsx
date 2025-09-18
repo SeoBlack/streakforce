@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Submission from "./components/submission"
+import Submission from "./components/submission";
 import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
 import WelcomePage from "./pages/auth-pages/WellcomePage";
@@ -8,6 +8,7 @@ import HomePage from "./pages/home/HomePage";
 import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
 import ProfilePage from "./pages/profile/Profile";
+import TeamPage from "./pages/Team/TeamPage";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
             <Route path="submission" element={<Submission />} />
             <Route path="create-challenge" element={<CreateChallenge />} />
             <Route path="profile" element={<ProfilePage />} />
-
+            <Route path="team" element={<TeamPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
