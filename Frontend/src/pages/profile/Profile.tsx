@@ -6,8 +6,8 @@ import { userData, habits } from "../../data";
 const ProfilePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto bg-white min-h-screen lg:max-w-2xl lg:my-8 lg:rounded-3xl lg:shadow-xl lg:overflow-hidden">
-        <div className="relative bg-white px-4 pt-6 pb-8 sm:px-6 lg:px-8">
+      <div className="max-w-md mx-auto bg-white min-h-screen md:max-w-7xl md:my-8 md:rounded-3xl md:shadow-xl md:overflow-hidden">
+        <div className="relative bg-white px-4 pt-6 pb-8 sm:px-6 md:px-8">
           <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
             <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
               <Settings className="w-5 h-5 text-gray-600" />
