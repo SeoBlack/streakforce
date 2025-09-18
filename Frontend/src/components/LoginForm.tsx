@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Button from "./Button";
 import SocialLogin from "./SocialLogin";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onLogin: (email: string, password: string) => void;
@@ -21,10 +22,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onLogin(email, password);
+    navigate("/home");
   };
 
   return (
@@ -82,7 +85,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
       </div>
 
       {/* Login Button */}
-      <Button type="submit" className="w-full bg-color-1 hover:bg-color-2 active:bg-color-3 text-white py-4 text-lg">
+      <Button
+        type="submit"
+        className="w-full bg-color-1 hover:bg-color-2 active:bg-color-3 text-white py-4 text-lg"
+      >
         Get Started
       </Button>
 
