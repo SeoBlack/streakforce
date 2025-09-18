@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import Submission from "./components/submission"
 import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
 import WelcomePage from "./pages/auth-pages/WellcomePage";
@@ -21,8 +21,10 @@ function App() {
           </Route>
           <Route element={<MainLayout />}>
             <Route path="home" element={<HomePage />} />
+            <Route path="submission" element={<Submission />} />
             <Route path="create-challenge" element={<CreateChallenge />} />
             <Route path="profile" element={<ProfilePage />} />
+
           </Route>
         </Routes>
       </BrowserRouter>
