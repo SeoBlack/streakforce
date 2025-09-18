@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HabitCard from "../../components/HabitCard";
 import HabitsSection from "../../components/HabitsSection";
-// import Footer from "../../components/Footer";
 import { User } from "lucide-react";
 
 import { habits, teamMembers } from "../../data";
@@ -9,7 +8,6 @@ import { habits, teamMembers } from "../../data";
 const HomePage: React.FC = () => {
   const [members, setMembers] = useState<typeof teamMembers>([]);
   const [habitList, setHabitList] = useState<typeof habits>([]);
-  // const [navList, setNavList] = useState<typeof navItems>([]);
   const [mainHabit] = useState({
     title: "Read 10 pages",
     streak: "15 day streak",
@@ -18,7 +16,6 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     setMembers(teamMembers);
     setHabitList(habits);
-    // setNavList(navItems);
   }, []);
 
   return (
@@ -47,8 +44,6 @@ const HomePage: React.FC = () => {
         </div>
         <HabitsSection habit={habitList} />
       </div>
-
-      {/* <Footer navItems={navList} /> */}
     </div>
   );
 };

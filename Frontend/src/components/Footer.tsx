@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 const Footer: React.FC = () => {
   const location = useLocation();
   const [showFooter, setShowFooter] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const navItems = [
@@ -22,12 +22,12 @@ const Footer: React.FC = () => {
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
 
       scrollTimeout.current = setTimeout(() => {
-        if (window.scrollY > lastScrollY) {
+        if (window.scrollY > lastScrollYRef.current) {
           setShowFooter(false);
         } else {
           setShowFooter(true);
         }
-        setLastScrollY(window.scrollY);
+        lastScrollYRef.current = window.scrollY;
       }, 100);
     };
 
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
       if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollY]);
+  }, []);
 
   return (
     <div
