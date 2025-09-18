@@ -8,6 +8,16 @@ Create a `.env` file in the backend directory with:
 DATABASE_URL=mongodb://localhost:27017/streakforce
 JWT_SECRET=your_super_secret_jwt_key_here
 PORT=5000
+GOOGLE_PROJECT_ID=your_google_project_id_here
+GEMINI_API_KEY=your_gemini_api_key
+
+
+```
+
+## Base URL
+
+```
+http://localhost:5000
 ```
 
 ## API Endpoints
@@ -17,6 +27,8 @@ PORT=5000
 #### POST /auth/register
 
 Register a new user
+
+**Request Body:**
 
 ```json
 {
@@ -28,14 +40,48 @@ Register a new user
 }
 ```
 
+**Response:**
+
+```json
+{
+  "message": "User registered successfully",
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "username": "johndoe",
+    "email": "john@example.com",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
 #### POST /auth/login
 
 Authenticate and return JWT
+
+**Request Body:**
 
 ```json
 {
   "email": "john@example.com",
   "password": "password123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Login successful",
+  "token": "jwt_token_here",
+  "user": {
+    "id": "user_id",
+    "username": "johndoe",
+    "email": "john@example.com",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
 }
 ```
 
@@ -47,11 +93,28 @@ Fetch user profile
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Response:**
+
+```json
+{
+  "message": "User profile retrieved successfully",
+  "user": {
+    "id": "user_id",
+    "username": "johndoe",
+    "email": "john@example.com",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
 #### PUT /users/:id
 
 Update user profile
 
 - **Headers**: `Authorization: Bearer <token>`
+
+**Request Body:**
 
 ```json
 {
@@ -59,6 +122,23 @@ Update user profile
   "lastName": "Doe",
   "bio": "Fitness enthusiast",
   "profilePicture": "https://example.com/photo.jpg"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "User profile updated successfully",
+  "user": {
+    "id": "user_id",
+    "username": "johndoe",
+    "email": "john@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "bio": "Fitness enthusiast",
+    "profilePicture": "https://example.com/photo.jpg"
+  }
 }
 ```
 
@@ -70,17 +150,27 @@ Create a new habit
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Request Body:**
+
 ```json
 {
-  "title": "Morning Run",
+  "name": "Morning Run",
   "description": "Run for 30 minutes every morning",
-  "category": "fitness",
-  "frequency": "daily",
-  "targetValue": 30,
-  "unit": "minutes",
-  "color": "#3B82F6",
-  "icon": "🏃",
-  "teamId": "optional_team_id"
+  "createdBy": "user_id"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Habit created successfully",
+  "habit": {
+    "id": "habit_id",
+    "name": "Morning Run",
+    "description": "Run for 30 minutes every morning",
+    "createdBy": "user_id"
+  }
 }
 ```
 
@@ -90,6 +180,20 @@ Get habit details
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Response:**
+
+```json
+{
+  "message": "Habit details retrieved successfully",
+  "habit": {
+    "id": "habit_id",
+    "name": "Morning Run",
+    "description": "Run for 30 minutes every morning",
+    "createdBy": "user_id"
+  }
+}
+```
+
 ### 👥 Teams
 
 #### POST /teams
@@ -98,12 +202,38 @@ Create a team
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Request Body:**
+
 ```json
 {
   "name": "Fitness Warriors",
   "description": "A team focused on fitness goals",
   "isPrivate": false,
-  "maxMembers": 20
+  "maxMembers": 20,
+  "createdBy": "user_id"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "Team created successfully",
+  "team": {
+    "name": "Fitness Warriors",
+    "description": "A team focused on fitness goals",
+    "inviteCode": "ABC12345",
+    "isPrivate": false,
+    "maxMembers": 20,
+    "createdBy": "user_id",
+    "members": [
+      {
+        "user": "user_id",
+        "role": "admin",
+        "joinedAt": "2024-01-15T10:00:00.000Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -113,6 +243,23 @@ Get team details
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Response:**
+
+```json
+{
+  "message": "Team details retrieved successfully",
+  "team": {
+    "id": "team_id",
+    "name": "Fitness Warriors",
+    "description": "A team focused on fitness goals",
+    "inviteCode": "ABC12345",
+    "isPrivate": false,
+    "maxMembers": 20,
+    "createdBy": "user_id"
+  }
+}
+```
+
 ### 📊 Progress & Check-Ins
 
 #### POST /checkins
@@ -121,55 +268,58 @@ Submit a daily check-in
 
 - **Headers**: `Authorization: Bearer <token>`
 
+**Request Body:**
+
 ```json
 {
   "habitId": "habit_id_here",
-  "value": 30,
-  "notes": "Great run today!",
-  "mood": "😊",
-  "checkInDate": "2024-01-15T10:00:00Z"
+  "checkInDate": "2024-01-15T10:00:00Z",
+  "userId": "user_id"
 }
 ```
 
-#### GET /progress/:userId
-
-Get user progress & streak stats
-
-- **Headers**: `Authorization: Bearer <token>`
-
-### 📖 Challenges (Author Feature)
-
-#### POST /challenges
-
-Author creates a challenge
-
-- **Headers**: `Authorization: Bearer <token>`
+**Response:**
 
 ```json
 {
-  "title": "30-Day Fitness Challenge",
-  "description": "Complete 30 days of consistent exercise",
-  "category": "fitness",
-  "duration": 30,
-  "difficulty": "medium",
-  "rules": ["Exercise for at least 30 minutes daily", "No skipping days"],
-  "rewards": ["Certificate of completion", "Fitness badge"],
-  "isPublic": true,
-  "maxParticipants": 100,
-  "startDate": "2024-02-01T00:00:00Z",
-  "endDate": "2024-03-02T23:59:59Z"
+  "message": "Check-in submitted successfully",
+  "checkIn": {
+    "id": "checkin_id",
+    "habitId": "habit_id_here",
+    "checkInDate": "2024-01-15T10:00:00Z",
+    "userId": "user_id"
+  }
 }
 ```
 
-#### GET /challenges/:id
+### 🤖 AI Features
 
-Fetch challenge details
+#### POST /ai/query
 
-- **Headers**: `Authorization: Bearer <token>`
+Execute AI query using Google Gemini
+
+**Request Body:**
+
+```json
+{
+  "query": "What are some good habits for improving productivity?"
+}
+```
+
+**Response:**
+
+```json
+{
+  "message": "AI query executed successfully",
+  "result": "AI-generated response text here"
+}
+```
 
 ## Response Format
 
 All endpoints return JSON responses with the following structure:
+
+**Success responses:**
 
 ```json
 {
@@ -178,14 +328,22 @@ All endpoints return JSON responses with the following structure:
 }
 ```
 
-Error responses:
+**Error responses:**
 
 ```json
 {
-  "message": "Error message",
-  "details": ["Validation error details"]
+  "message": "Error message"
 }
 ```
+
+**Common HTTP Status Codes:**
+
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `404` - Not Found
+- `500` - Internal Server Error
 
 ## Authentication
 
@@ -197,7 +355,17 @@ Authorization: Bearer <your_jwt_token>
 
 ## Running the Server
 
-1. Install dependencies: `npm install`
-2. Create `.env` file with required variables
-3. Start development server: `npm run dev`
-4. Build for production: `npm run build && npm start`
+1. Navigate to the backend directory: `cd backend`
+2. Install dependencies: `npm install`
+3. Create `.env` file with required variables (see Environment Variables section)
+4. Start development server: `npm run dev` or `node index.js`
+5. The server will run on `http://localhost:5000`
+
+## Available Endpoints Summary
+
+- **Authentication**: `/auth/register`, `/auth/login`
+- **Users**: `/users/:id` (GET, PUT)
+- **Habits**: `/habits` (POST), `/habits/:id` (GET)
+- **Teams**: `/teams` (POST), `/teams/:id` (GET)
+- **Check-ins**: `/checkins` (POST)
+- **AI**: `/ai/query` (POST)
