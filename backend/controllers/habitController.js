@@ -1,18 +1,43 @@
-const habits = [];
+const { v4: uuidv4 } = require("uuid");
+const habits = [
+  {
+    id: "testhabit1",
+    name: "Habit 1",
+    description: "Habit 1 description",
+    createdBy: "1",
+  },
+
+  {
+    id: uuidv4(),
+    name: "Habit 2",
+    description: "Habit 2 description",
+    createdBy: "2",
+  },
+
+  {
+    id: uuidv4(),
+    name: "Habit 3",
+    description: "Habit 3 description",
+    createdBy: "3",
+  },
+];
 
 // POST /habits
 const createHabit = async (req, res) => {
   try {
+    const { name, description, createdBy } = req.body;
     const habitData = {
-      ...req.body,
-      createdBy: req.user.id,
+      id: uuidv4(),
+      name: name,
+      description: description,
+      createdBy: createdBy,
     };
 
-    const habit = habits.push(habitData);
+    habits.push(habitData);
 
     res.status(201).json({
       message: "Habit created successfully",
-      habit: habit[habit.length - 1],
+      habit: habitData,
     });
   } catch (error) {
     console.error("Create habit error:", error);

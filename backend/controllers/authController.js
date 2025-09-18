@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+// const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
 
 // Generate JWT token
@@ -7,7 +7,32 @@ const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-const users = [];
+const users = [
+  {
+    id: uuidv4(),
+    username: "test",
+    email: "test@test.com",
+    password: "test",
+    firstName: "test",
+    lastName: "test",
+  },
+  {
+    id: uuidv4(),
+    username: "test2",
+    email: "test2@test.com",
+    password: "test2",
+    firstName: "test2",
+    lastName: "test2",
+  },
+  {
+    id: uuidv4(),
+    username: "test3",
+    email: "test3@test.com",
+    password: "test3",
+    firstName: "test3",
+    lastName: "test3",
+  },
+];
 
 // POST /auth/register
 const register = async (req, res) => {
@@ -58,8 +83,11 @@ const login = async (req, res) => {
     }
 
     // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // const isMatch = await bcrypt.compare(password, user.password);
+    // if (!isMatch) {
+    //   return res.status(401).json({ message: "Invalid credentials" });
+    // }
+    if (password !== user.password) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 

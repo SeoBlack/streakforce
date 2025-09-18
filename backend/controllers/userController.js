@@ -1,4 +1,30 @@
-const users = [];
+const { v4: uuidv4 } = require("uuid");
+const users = [
+  {
+    id: "testuser1",
+    username: "test",
+    email: "test@test.com",
+    password: "test",
+    firstName: "test",
+    lastName: "test",
+  },
+  {
+    id: uuidv4(),
+    username: "test2",
+    email: "test2@test.com",
+    password: "test2",
+    firstName: "test2",
+    lastName: "test2",
+  },
+  {
+    id: uuidv4(),
+    username: "test3",
+    email: "test3@test.com",
+    password: "test3",
+    firstName: "test3",
+    lastName: "test3",
+  },
+];
 
 // GET /users/:id
 const getUserProfile = async (req, res) => {
@@ -27,12 +53,6 @@ const updateUserProfile = async (req, res) => {
     const updates = req.body;
 
     // Check if user exists and is the same as the authenticated user
-    //TODO: replace the following logic with actual user profile update logic
-    if (req.user.id.toString() !== id) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to update this profile" });
-    }
     //TODO: replace the following logic with actual user profile update logic
     // Remove fields that shouldn't be updated
     delete updates.password;

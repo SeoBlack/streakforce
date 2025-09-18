@@ -1,18 +1,23 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
+const logger = require("./middleware/logger");
+const bodyParser = require("body-parser");
+// const connectDB = require("./config/db");
 
 dotenv.config();
 
 // Connect to DB
-connectDB();
+// connectDB();
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(logger);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Import routes
 const authRoutes = require("./routes/auth");
@@ -20,8 +25,7 @@ const userRoutes = require("./routes/users");
 const habitRoutes = require("./routes/habits");
 const teamRoutes = require("./routes/teams");
 const checkInRoutes = require("./routes/checkins");
-const progressRoutes = require("./routes/progress");
-const challengeRoutes = require("./routes/challenges");
+const aiRoutes = require("./routes/ai");
 
 // Routes
 app.get("/", (req, res) => {
@@ -34,8 +38,7 @@ app.use("/users", userRoutes);
 app.use("/habits", habitRoutes);
 app.use("/teams", teamRoutes);
 app.use("/checkins", checkInRoutes);
-app.use("/progress", progressRoutes);
-app.use("/challenges", challengeRoutes);
+app.use("/ai", aiRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

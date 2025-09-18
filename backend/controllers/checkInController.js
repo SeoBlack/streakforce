@@ -1,16 +1,30 @@
 const { v4: uuidv4 } = require("uuid");
 
-const checkIns = [];
+const checkIns = [
+  {
+    id: "testcheckin1",
+    habitId: "1",
+    checkInDate: "2025-01-01",
+    userId: "1",
+  },
+
+  {
+    id: uuidv4(),
+    habitId: "2",
+    checkInDate: "2025-01-02",
+    userId: "2",
+  },
+];
 // POST /checkins
 const submitCheckIn = async (req, res) => {
   try {
-    const { habitId, checkInDate } = req.body;
+    const { habitId, checkInDate, userId } = req.body;
     // TODO: replace the following logic with actual check-in submission logic
     checkIns.push({
       id: uuidv4(),
       habitId: habitId,
       checkInDate: checkInDate,
-      userId: req.user.id,
+      userId: userId,
     });
 
     res.status(201).json({
