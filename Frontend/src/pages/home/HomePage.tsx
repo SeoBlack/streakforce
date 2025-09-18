@@ -42,7 +42,7 @@ const HomePage: React.FC = () => {
         <div className="mb-8">
           <HabitCard habit={mainHabit} teamMembers={members} />
         </div>
-        <HabitsSection habit={habitList} />
+        <HabitsSection title="Other Habits" habit={habitList} />
       </div>
     </div>
   );
