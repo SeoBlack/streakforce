@@ -7,6 +7,7 @@ import LoginPage from "./pages/auth-pages/LoginPage";
 import HomePage from "./pages/home/HomePage";
 import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
+import ProfilePage from "./pages/profile/Profile";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="create-challenge" element={<CreateChallenge />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
