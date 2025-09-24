@@ -1,21 +1,28 @@
 import React, { useState } from "react";
 import logo from "../../assets/logo.svg";
 import AuthForm from "../../components/LoginForm";
+import { useAuth } from "../../context/useAuth";
 
 const LoginPage = () => {
   const [mode, setMode] = useState("login");
+  const { login, register } = useAuth();
 
   const handleSubmit = (email, password, confirmPassword) => {
     if (mode === "login") {
-      console.log("Login:", email, password);
+      if (!email || !password || !confirmPassword) {
+        return;
+      }
+      login(email, password);
     } else {
-      console.log("Signup:", email, password, confirmPassword);
+      if (!email || !password || !confirmPassword) {
+        return;
+      }
+      register(email, password, confirmPassword);
     }
   };
 
   const handleForgotPassword = () => console.log("Forgot Password");
   const handleGoogleLogin = () => console.log("Google Login");
-  const handleAppleLogin = () => console.log("Apple Login");
 
   const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
 
@@ -46,7 +53,6 @@ const LoginPage = () => {
           onSubmit={handleSubmit}
           onForgotPassword={mode === "login" ? handleForgotPassword : undefined}
           onGoogleLogin={handleGoogleLogin}
-          onAppleLogin={handleAppleLogin}
           onSwitchMode={toggleMode}
         />
       </div>

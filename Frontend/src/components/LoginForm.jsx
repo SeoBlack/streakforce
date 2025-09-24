@@ -9,7 +9,6 @@ const AuthForm = ({
   onSubmit,
   onForgotPassword,
   onGoogleLogin,
-  onAppleLogin,
   onSwitchMode,
 }) => {
   const [email, setEmail] = useState("");
@@ -132,7 +131,7 @@ const AuthForm = ({
       </div>
 
       {/* Social Login */}
-      <SocialLogin onGoogleLogin={onGoogleLogin} onAppleLogin={onAppleLogin} />
+      <SocialLogin onGoogleLogin={onGoogleLogin} />
 
       {/* Switch Mode */}
       <div className="mt-4 text-center">

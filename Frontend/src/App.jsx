@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import Submission from "./components/submission";
 import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
@@ -12,24 +13,26 @@ import TeamPage from "./pages/Team/TeamPage";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AuthLayout />}>
-            <Route index element={<WelcomePage />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-          <Route element={<MainLayout />}>
-            <Route path="home" element={<HomePage />} />
-            <Route path="submission" element={<Submission />} />
-            <Route path="create-challenge" element={<CreateChallenge />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="team" element={<TeamPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AuthLayout />}>
+              <Route index element={<WelcomePage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+            <Route element={<MainLayout />}>
+              <Route path="home" element={<HomePage />} />
+              <Route path="submission" element={<Submission />} />
+              <Route path="create-challenge" element={<CreateChallenge />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="team" element={<TeamPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </AuthProvider>
   );
 }
 
