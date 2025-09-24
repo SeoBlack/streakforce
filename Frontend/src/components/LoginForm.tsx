@@ -4,29 +4,37 @@ import Button from "./Button";
 import SocialLogin from "./SocialLogin";
 import { useNavigate } from "react-router-dom";
 
-interface LoginFormProps {
-  onLogin: (email: string, password: string) => void;
-  onForgotPassword: () => void;
+interface AuthFormProps {
+  mode: "login" | "signup";
+  onSubmit: (email: string, password: string, confirmPassword?: string) => void;
+  onForgotPassword?: () => void;
   onGoogleLogin: () => void;
   onAppleLogin: () => void;
-  onSignUp: () => void;
+  onSwitchMode: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({
-  onLogin,
+const AuthForm: React.FC<AuthFormProps> = ({
+  mode,
+  onSubmit,
   onForgotPassword,
   onGoogleLogin,
   onAppleLogin,
-  onSignUp,
+  onSwitchMode,
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(email, password);
+    if (mode === "signup") {
+      onSubmit(email, password, confirmPassword);
+    } else {
+      onSubmit(email, password);
+    }
     navigate("/home");
   };
 
@@ -73,23 +81,53 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </button>
       </div>
 
-      {/* Forgot Password */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={onForgotPassword}
-          className="text-color-1 hover:text-color-2 text-sm sm:text-base font-medium"
-        >
-          Forgot Password?
-        </button>
-      </div>
+      {/* Confirm Password (Signup Only) */}
+      {mode === "signup" && (
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Lock className="h-6 w-8 text-gray-400" />
+          </div>
+          <input
+            type={showPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+            className="w-full pl-12 pr-12 py-4 border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-1 text-gray-900 placeholder-gray-500 text-base sm:text-lg"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-6 w-8 text-gray-400 hover:text-gray-600" />
+            ) : (
+              <Eye className="h-6 w-8 text-gray-400 hover:text-gray-600" />
+            )}
+          </button>
+        </div>
+      )}
 
-      {/* Login Button */}
+      {/* Forgot Password (Login Only) */}
+      {mode === "login" && onForgotPassword && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={onForgotPassword}
+            className="text-color-1 hover:text-color-2 text-sm sm:text-base font-medium"
+          >
+            Forgot Password?
+          </button>
+        </div>
+      )}
+
+      {/* Submit Button */}
       <Button
         type="submit"
         className="w-full bg-color-1 hover:bg-color-2 active:bg-color-3 text-white py-4 text-lg"
       >
-        Get Started
+        {mode === "login" ? "Get Started" : "Sign Up"}
       </Button>
 
       {/* Divider */}
@@ -105,19 +143,23 @@ const LoginForm: React.FC<LoginFormProps> = ({
       {/* Social Login */}
       <SocialLogin onGoogleLogin={onGoogleLogin} onAppleLogin={onAppleLogin} />
 
-      {/* Sign Up */}
+      {/* Switch Mode */}
       <div className="mt-4 text-center">
-        <span className="text-gray-600 text-base">Don't have an account? </span>
+        <span className="text-gray-600 text-base">
+          {mode === "login"
+            ? "Don't have an account? "
+            : "Already have an account? "}
+        </span>
         <button
           type="button"
-          onClick={onSignUp}
+          onClick={onSwitchMode}
           className="text-color-1 hover:text-color-2 font-medium text-base"
         >
-          Sign Up
+          {mode === "login" ? "Sign Up" : "Login"}
         </button>
       </div>
     </form>
   );
 };
 
-export default LoginForm;
+export default AuthForm;
