@@ -4,16 +4,7 @@ import Button from "./Button";
 import SocialLogin from "./SocialLogin";
 import { useNavigate } from "react-router-dom";
 
-interface AuthFormProps {
-  mode: "login" | "signup";
-  onSubmit: (email: string, password: string, confirmPassword?: string) => void;
-  onForgotPassword?: () => void;
-  onGoogleLogin: () => void;
-  onAppleLogin: () => void;
-  onSwitchMode: () => void;
-}
-
-const AuthForm: React.FC<AuthFormProps> = ({
+const AuthForm = ({
   mode,
   onSubmit,
   onForgotPassword,
@@ -28,7 +19,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (mode === "signup") {
       onSubmit(email, password, confirmPassword);

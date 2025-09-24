@@ -1,24 +1,11 @@
 import React from "react";
 import HabitItem from "./HabitItem";
 
-interface HabitsSectionProps {
-  title: string; 
-  habit: {
-    icon: React.ReactNode;
-    title: string;
-    streak: string;
-    streakCount: number;
-    iconBg: string;
-  }[];
-}
-
-const HabitsSection: React.FC<HabitsSectionProps> = ({title, habit }) => {
+const HabitsSection = ({ title, habit }) => {
   return (
     <div className="px-4 sm:px-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-          {title}
-        </h2>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">{title}</h2>
         <button className="text-red-500 font-medium text-sm sm:text-base hover:text-red-600 transition-colors">
           View All
         </button>

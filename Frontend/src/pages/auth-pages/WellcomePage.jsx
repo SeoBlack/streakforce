@@ -3,7 +3,7 @@ import logo from "../../assets/logo.svg";
 import Image from "../../assets/wellcome-image.png";
 import Button from "../../components/Button";
 
-const WelcomePage: React.FC = () => {
+const WelcomePage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto">
       <div className="flex-1 flex flex-col items-center justify-center px-6 sm:px-8 pb-16 sm:pb-20">

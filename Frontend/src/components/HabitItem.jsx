@@ -1,21 +1,7 @@
 import React from "react";
 import { Flame } from "lucide-react";
 
-interface HabitItemProps {
-  icon: React.ReactNode;
-  title: string;
-  streak: string;
-  streakCount: number;
-  iconBg: string;
-}
-
-const HabitItem: React.FC<HabitItemProps> = ({
-  icon,
-  title,
-  streak,
-  streakCount,
-  iconBg,
-}) => {
+const HabitItem = ({ icon, title, streak, streakCount, iconBg }) => {
   return (
     <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
       <div className="flex items-center space-x-3">

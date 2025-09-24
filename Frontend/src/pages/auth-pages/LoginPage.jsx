@@ -2,14 +2,10 @@ import React, { useState } from "react";
 import logo from "../../assets/logo.svg";
 import AuthForm from "../../components/LoginForm";
 
-const LoginPage: React.FC = () => {
-  const [mode, setMode] = useState<"login" | "signup">("login");
+const LoginPage = () => {
+  const [mode, setMode] = useState("login");
 
-  const handleSubmit = (
-    email: string,
-    password: string,
-    confirmPassword?: string
-  ) => {
+  const handleSubmit = (email, password, confirmPassword) => {
     if (mode === "login") {
       console.log("Login:", email, password);
     } else {

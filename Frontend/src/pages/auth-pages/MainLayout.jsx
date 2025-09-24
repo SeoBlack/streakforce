@@ -1,9 +1,9 @@
-// layouts/MainLayout.tsx
+// layouts/MainLayout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Footer from "../../components/Footer";
 
-const MainLayout: React.FC = () => {
+const MainLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Content takes available space */}

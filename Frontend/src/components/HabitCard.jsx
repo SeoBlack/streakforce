@@ -3,19 +3,7 @@ import { AlertCircle, Flame, CheckCircle2 } from "lucide-react";
 import TeamMember from "./TeamMember";
 import Button from "./Button";
 
-interface HabitCardProps {
-  habit: {
-    title: string;
-    streak: string;
-  };
-  teamMembers: {
-    name: string;
-    isCompleted: boolean;
-    avatar?: string;
-  }[];
-}
-
-const HabitCard: React.FC<HabitCardProps> = ({ habit, teamMembers }) => {
+const HabitCard = ({ habit, teamMembers }) => {
   return (
     <>
       <div className="mt-4 bg-gradient-to-r mx-4 from-orange-100 to-pink-100 rounded-2xl p-6 mb-6 border border-orange-200">

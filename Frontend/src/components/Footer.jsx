@@ -2,11 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { Home, Users, Plus, TrendingUp, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-const Footer: React.FC = () => {
+const Footer = () => {
   const location = useLocation();
   const [showFooter, setShowFooter] = useState(true);
   const lastScrollYRef = useRef(0);
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimeout = useRef(null);
 
   const navItems = [
     { icon: Home, label: "Home", to: "/home" },

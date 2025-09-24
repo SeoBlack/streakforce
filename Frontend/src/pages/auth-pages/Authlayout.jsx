@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-
-const AuthLayout: React.FC = () => {
+const AuthLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Outlet />

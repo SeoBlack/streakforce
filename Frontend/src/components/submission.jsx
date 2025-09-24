@@ -11,7 +11,6 @@ export default function StreakCard({
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-orange-400 to-pink-500 p-4 font-poppins">
       {/* Card */}
       <div className="w-full max-w-sm rounded-3xl bg-gradient-to-b from-orange-400 to-pink-500 text-white shadow-2xl p-6 text-center">
-        
         {/* Check Icon */}
         <div className="flex justify-center mb-6">
           <div className="bg-white rounded-full w-14 h-14 flex items-center justify-center">
@@ -20,12 +19,8 @@ export default function StreakCard({
         </div>
 
         {/* Title & subtitle */}
-        <h2 className="font-semibold leading-snug text-[30px] mb-3">
-          {title}
-        </h2>
-        <p className="text-[18px] font-normal mb-8">
-          {subtitle}
-        </p>
+        <h2 className="font-semibold leading-snug text-[30px] mb-3">{title}</h2>
+        <p className="text-[18px] font-normal mb-8">{subtitle}</p>
 
         {/* Streak area */}
         <div className="mt-6">
@@ -40,13 +35,13 @@ export default function StreakCard({
 
         {/* XP pill */}
         {/* XP pill */}
-                <div className="inline-flex items-center gap-2 mt-5 px-6 py-2 
-                rounded-full bg-orange-400/100 text-white font-bold text-base">
-                 <span className="text-yellow-400">⭐</span>
-               <span>+{xp} XP</span>
-             </div>
-
-    
+        <div
+          className="inline-flex items-center gap-2 mt-5 px-6 py-2 
+                rounded-full bg-orange-400/100 text-white font-bold text-base"
+        >
+          <span className="text-yellow-400">⭐</span>
+          <span>+{xp} XP</span>
+        </div>
 
         {/* Buttons */}
         <div className="mt-8 space-y-4">
@@ -55,7 +50,9 @@ export default function StreakCard({
           </button>
 
           <button className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-pink-500 text-white font-medium text-[16px] border border-white/30 hover:opacity-90 transition">
-            <span className="inline-flex items-center gap-2">↪ Share Streak</span>
+            <span className="inline-flex items-center gap-2">
+              ↪ Share Streak
+            </span>
           </button>
         </div>
 

@@ -7,8 +7,8 @@ import Button from "../../components/Button";
 const CreateChallenge = () => {
   const [habitName, setHabitName] = useState("");
   const [duration, setDuration] = useState(30);
-  const [privacy, setPrivacy] = useState<"solo" | "team">("team");
-  const [emails, setEmails] = useState<string[]>([]);
+  const [privacy, setPrivacy] = useState("team");
+  const [emails, setEmails] = useState([]);
 
   const handleSubmit = () => {
     console.log("Submitting challenge:", {
