@@ -4,14 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "start": "node index.js",
     "dev": "nodemon index.js",
-=======
-    "start": "node dist/index.js",
-    "dev": "nodemon index.js",
-    "build": "tsc",
->>>>>>> 89a15fb892cd85dec775dd2f888c0f35584aacf2
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
