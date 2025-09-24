@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "node index.js",
     "dev": "nodemon index.js",
+=======
+    "start": "node dist/index.js",
+    "dev": "nodemon index.js",
+    "build": "tsc",
+>>>>>>> 89a15fb892cd85dec775dd2f888c0f35584aacf2
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,7 +19,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^1.20.0",
     "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -24,6 +32,15 @@
     "nanoid": "^5.1.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96",
+    "@types/nanoid": "^2.1.0",
+    "@types/node": "^24.3.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.9.2"
   }
 }
