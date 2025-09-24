@@ -25,12 +25,20 @@ const habits = [
 // POST /habits
 const createHabit = async (req, res) => {
   try {
-    const { name, description, createdBy } = req.body;
+    const { name, description } = req.body;
+    if (!name || !description) {
+      return res
+        .status(400)
+        .json({ message: "name and description are required" });
+    }
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const habitData = {
       id: uuidv4(),
-      name: name,
-      description: description,
-      createdBy: createdBy,
+      name,
+      description,
+      createdBy: req.user.id,
     };
 
     habits.push(habitData);

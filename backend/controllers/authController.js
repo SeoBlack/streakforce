@@ -4,7 +4,11 @@ const { v4: uuidv4 } = require("uuid");
 
 // Generate JWT token
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not set");
+  }
+  return jwt.sign({ userId }, secret, { expiresIn: "7d" });
 };
 
 const users = [
@@ -38,15 +42,25 @@ const users = [
 const register = async (req, res) => {
   try {
     const { username, email, password, firstName, lastName } = req.body;
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "username, email, and password are required" });
+    }
+    const existing = users.find((u) => u.email === email);
+    if (existing) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
 
     //add user to mongo db
+    // const hashed = await bcrypt.hash(password, 10);
     users.push({
       id: uuidv4(),
-      username: username,
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
+      username,
+      email,
+      password: password, // TODO: replace with hashed
+      firstName,
+      lastName,
     });
     // Generate token
     //TODO: replace the following logic with actual user registration logic

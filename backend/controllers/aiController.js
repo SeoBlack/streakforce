@@ -1,5 +1,9 @@
 const { GoogleGenAI } = require("@google/genai");
 
+if (!process.env.GOOGLE_PROJECT_ID) {
+  throw new Error("GOOGLE_PROJECT_ID environment variable is required");
+}
+
 const ai = new GoogleGenAI({
   project: process.env.GOOGLE_PROJECT_ID,
 });

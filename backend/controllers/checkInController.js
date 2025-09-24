@@ -18,14 +18,26 @@ const checkIns = [
 // POST /checkins
 const submitCheckIn = async (req, res) => {
   try {
-    const { habitId, checkInDate, userId } = req.body;
-    // TODO: replace the following logic with actual check-in submission logic
-    checkIns.push({
+    const { habitId, checkInDate } = req.body;
+    if (!habitId || !checkInDate) {
+      return res
+        .status(400)
+        .json({ message: "habitId and checkInDate are required" });
+    }
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const dt = new Date(checkInDate);
+    if (Number.isNaN(dt.getTime())) {
+      return res.status(400).json({ message: "checkInDate must be ISO-8601" });
+    }
+    const createdCheckIn = {
       id: uuidv4(),
-      habitId: habitId,
-      checkInDate: checkInDate,
-      userId: userId,
-    });
+      habitId,
+      checkInDate: dt.toISOString(),
+      userId: req.user.id,
+    };
+    checkIns.push(createdCheckIn);
 
     res.status(201).json({
       message: "Check-in submitted successfully",

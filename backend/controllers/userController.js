@@ -68,10 +68,11 @@ const updateUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    Object.assign(user, updates);
 
     res.json({
       message: "User profile updated successfully",
-      user: user,
+      user,
     });
   } catch (error) {
     console.error("Update user profile error:", error);

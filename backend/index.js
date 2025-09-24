@@ -23,7 +23,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const habitRoutes = require("./routes/habits");
-const teamRoutes = require("./routes/teams");
 const checkInRoutes = require("./routes/checkins");
 const aiRoutes = require("./routes/ai");
 
@@ -36,7 +35,6 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/habits", habitRoutes);
-app.use("/teams", teamRoutes);
 app.use("/checkins", checkInRoutes);
 app.use("/ai", aiRoutes);
 
