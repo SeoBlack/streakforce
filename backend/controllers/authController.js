@@ -1,0 +1,134 @@
+const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
+
+// Generate JWT token
+const generateToken = (userId) => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not set");
+  }
+  return jwt.sign({ userId }, secret, { expiresIn: "7d" });
+};
+
+const users = [
+  {
+    id: uuidv4(),
+    username: "test",
+    email: "test@test.com",
+    password: "test",
+    firstName: "test",
+    lastName: "test",
+  },
+  {
+    id: uuidv4(),
+    username: "test2",
+    email: "test2@test.com",
+    password: "test2",
+    firstName: "test2",
+    lastName: "test2",
+  },
+  {
+    id: uuidv4(),
+    username: "test3",
+    email: "test3@test.com",
+    password: "test3",
+    firstName: "test3",
+    lastName: "test3",
+  },
+];
+
+// POST /auth/register
+const register = async (req, res) => {
+  try {
+    const { username, email, password, firstName, lastName } = req.body;
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "username, email, and password are required" });
+    }
+    const existing = users.find((u) => u.email === email);
+    if (existing) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
+
+    //add user to mongo db
+    // const hashed = await bcrypt.hash(password, 10);
+    users.push({
+      id: uuidv4(),
+      username,
+      email,
+      password: password, // TODO: replace with hashed
+      firstName,
+      lastName,
+    });
+    // Generate token
+    //TODO: replace the following logic with actual user registration logic
+    const userId = users[users.length - 1].id;
+    const token = generateToken(userId);
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: userId,
+        username: username,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+      },
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Server error during registration" });
+  }
+};
+
+// POST /auth/login
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user by email
+    //TODO: replace the following logic with actual user login logic
+    const user = users.find((user) => user.email === email);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // Check password
+    // const isMatch = await bcrypt.compare(password, user.password);
+    // if (!isMatch) {
+    //   return res.status(401).json({ message: "Invalid credentials" });
+    // }
+    if (password !== user.password) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+
+    // Generate token
+    const token = generateToken(user.id);
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error during login" });
+  }
+};
+
+module.exports = {
+  register,
+  login,
+};
