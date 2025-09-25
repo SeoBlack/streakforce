@@ -1,23 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import AuthForm from "../../components/LoginForm";
+import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
 
 const LoginPage = () => {
   const [mode, setMode] = useState("login");
-
+  const { login, register, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
   const handleSubmit = (email, password, confirmPassword) => {
     if (mode === "login") {
-      console.log("Login:", email, password);
+      if (!email || !password) {
+        return;
+      }
+      login(email, password);
     } else {
-      console.log("Signup:", email, password, confirmPassword);
+      if (!email || !password || !confirmPassword) {
+        return;
+      }
+      register(email, password, confirmPassword);
     }
   };
 
   const handleForgotPassword = () => console.log("Forgot Password");
   const handleGoogleLogin = () => console.log("Google Login");
-  const handleAppleLogin = () => console.log("Apple Login");
 
   const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
+  useEffect(() => {
+    //redirect to home if user is authenticated
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col md:shadow-2xl md:max-w-lg md:mx-auto px-4 sm:px-6">
@@ -46,10 +61,10 @@ const LoginPage = () => {
           onSubmit={handleSubmit}
           onForgotPassword={mode === "login" ? handleForgotPassword : undefined}
           onGoogleLogin={handleGoogleLogin}
-          onAppleLogin={handleAppleLogin}
           onSwitchMode={toggleMode}
         />
       </div>
+      {isLoading && <Loader />}
     </div>
   );
 };

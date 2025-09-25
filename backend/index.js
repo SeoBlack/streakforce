@@ -3,12 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const logger = require("./middleware/logger");
 const bodyParser = require("body-parser");
-// const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 
 dotenv.config();
 
 // Connect to DB
-// connectDB();
+connectDB();
 
 const app = express();
 

@@ -1,16 +1,29 @@
-import { Settings, Edit3, Trophy } from "lucide-react";
+import { Settings, Edit3, Trophy, LogOut } from "lucide-react";
 import ProgressComponent from "../../components/ProgressComponent";
 import HabitsSection from "../../components/HabitsSection";
 import { userData, habits } from "../../data";
+import { useAuth } from "../../context/useAuth";
 
 const ProfilePage = () => {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto bg-white min-h-screen md:max-w-7xl md:my-8 md:rounded-3xl md:shadow-xl md:overflow-hidden">
         <div className="relative bg-white px-4 pt-6 pb-8 sm:px-6 md:px-8">
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2">
             <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
               <Settings className="w-5 h-5 text-gray-600" />
+            </button>
+            {/* Logout button */}
+            <button
+              onClick={handleLogout}
+              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              <LogOut className="w-5 h-5 text-red-500 hover:text-red-600 transition-colors cursor-pointer" />
             </button>
           </div>
 

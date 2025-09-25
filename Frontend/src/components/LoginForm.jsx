@@ -3,13 +3,13 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Button from "./Button";
 import SocialLogin from "./SocialLogin";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 const AuthForm = ({
   mode,
   onSubmit,
   onForgotPassword,
   onGoogleLogin,
-  onAppleLogin,
   onSwitchMode,
 }) => {
   const [email, setEmail] = useState("");
@@ -17,6 +17,7 @@ const AuthForm = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -31,6 +32,7 @@ const AuthForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <div className="text-red-500">{error}</div>}
       {/* Email Input */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -132,7 +134,7 @@ const AuthForm = ({
       </div>
 
       {/* Social Login */}
-      <SocialLogin onGoogleLogin={onGoogleLogin} onAppleLogin={onAppleLogin} />
+      <SocialLogin onGoogleLogin={onGoogleLogin} />
 
       {/* Switch Mode */}
       <div className="mt-4 text-center">
