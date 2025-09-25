@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import AuthForm from "../../components/LoginForm";
 import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
 
 const LoginPage = () => {
   const [mode, setMode] = useState("login");
-  const { login, register } = useAuth();
-
+  const { login, register, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
   const handleSubmit = (email, password, confirmPassword) => {
     if (mode === "login") {
-      if (!email || !password || !confirmPassword) {
+      if (!email || !password) {
         return;
       }
       login(email, password);
@@ -25,6 +27,12 @@ const LoginPage = () => {
   const handleGoogleLogin = () => console.log("Google Login");
 
   const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
+  useEffect(() => {
+    //redirect to home if user is authenticated
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col md:shadow-2xl md:max-w-lg md:mx-auto px-4 sm:px-6">
@@ -56,6 +64,7 @@ const LoginPage = () => {
           onSwitchMode={toggleMode}
         />
       </div>
+      {isLoading && <Loader />}
     </div>
   );
 };

@@ -2,8 +2,17 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Footer from "../../components/Footer";
-
+import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const MainLayout = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
   return (
     <div className="min-h-screen flex flex-col">
       {/* Content takes available space */}

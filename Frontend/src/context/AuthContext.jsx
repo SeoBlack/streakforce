@@ -1,5 +1,6 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import { AUTH_ACTIONS, initialState, authReducer } from "./authConstants";
+import { API_BASE_URL, API_ENDPOINTS } from "../utils/api";
 
 // Create Auth Context
 const AuthContext = createContext();
@@ -7,9 +8,6 @@ const AuthContext = createContext();
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-
-  // API base URL - you may want to move this to a config file
-  const API_BASE_URL = "http://localhost:3000/api"; // Adjust based on your backend URL
 
   // Helper function to make authenticated API calls
   const apiCall = async (url, options = {}) => {
@@ -23,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         ...options.headers,
       },
     };
-
+    console.log(API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}${url}`, config);
 
     if (!response.ok) {
@@ -38,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
 
-    const response = await apiCall("/auth/login", {
+    const response = await apiCall(API_ENDPOINTS.LOGIN, {
       method: "POST",
       body: JSON.stringify({ email, password }),
     }).catch((error) => {
@@ -71,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (email, password, firstName, lastName) => {
     dispatch({ type: AUTH_ACTIONS.REGISTER_START });
 
-    const response = await apiCall("/auth/register", {
+    const response = await apiCall(API_ENDPOINTS.REGISTER, {
       method: "POST",
       body: JSON.stringify({ email, password, firstName, lastName }),
     }).catch((error) => {
@@ -120,19 +118,21 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    // You might want to create a /auth/verify endpoint in your backend
-    // For now, we'll assume the token is valid if it exists
-    // In a real app, you'd verify the token with the backend
+    //verify token
+    const response = await apiCall(API_ENDPOINTS.VERIFY, {
+      method: "GET",
+    });
 
-    // If you have a /auth/me endpoint, you can use it like this:
-    // const response = await apiCall('/auth/me');
-    // dispatch({
-    //   type: AUTH_ACTIONS.LOGIN_SUCCESS,
-    //   payload: { user: response.user, token },
-    // });
+    if (response.success === false) {
+      return response;
+    }
 
-    // For now, we'll just set loading to false
-    dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+    const { user } = response;
+
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user, token },
+    });
   };
 
   // Update user profile
