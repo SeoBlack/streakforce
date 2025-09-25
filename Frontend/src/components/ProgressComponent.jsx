@@ -1,25 +1,6 @@
 import { Star, Flame } from "lucide-react";
 
-interface UserData {
-  name: string;
-  title: string;
-  avatar: string;
-  xpPoints: {
-    current: number;
-    total: number;
-    nextLevel: number;
-  };
-  level: {
-    current: number;
-    title: string;
-  };
-  streak: {
-    current: number;
-    longest: number;
-  };
-}
-
-const ProgressComponent: React.FC<{ userData: UserData }> = ({ userData }) => {
+const ProgressComponent = ({ userData }) => {
   const progressPercentage =
     (userData.xpPoints.current / userData.xpPoints.total) * 100;
 

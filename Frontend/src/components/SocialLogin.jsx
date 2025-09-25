@@ -1,15 +1,7 @@
 import React from "react";
 import Button from "./Button";
 
-interface SocialLoginProps {
-  onGoogleLogin: () => void;
-  onAppleLogin: () => void;
-}
-
-const SocialLogin: React.FC<SocialLoginProps> = ({
-  onGoogleLogin,
-  onAppleLogin,
-}) => {
+const SocialLogin = ({ onGoogleLogin, onAppleLogin }) => {
   return (
     <div className="space-y-3">
       {/* Google Login */}

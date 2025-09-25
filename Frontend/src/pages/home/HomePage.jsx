@@ -5,9 +5,9 @@ import { User } from "lucide-react";
 
 import { habits, teamMembers } from "../../data";
 
-const HomePage: React.FC = () => {
-  const [members, setMembers] = useState<typeof teamMembers>([]);
-  const [habitList, setHabitList] = useState<typeof habits>([]);
+const HomePage = () => {
+  const [members, setMembers] = useState([]);
+  const [habitList, setHabitList] = useState([]);
   const [mainHabit] = useState({
     title: "Read 10 pages",
     streak: "15 day streak",

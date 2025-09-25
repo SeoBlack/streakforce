@@ -2,21 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 
-interface ButtonProps {
-  children: React.ReactNode;
-  to?: string; // for navigation
-  onClick?: () => void; // for normal actions
-  type?: "button" | "submit" | "reset";
-  className?: string; // allow extra styles
-}
-
-const Button: React.FC<ButtonProps> = ({
-  children,
-  to,
-  onClick,
-  type = "button",
-  className,
-}) => {
+const Button = ({ children, to, onClick, type = "button", className }) => {
   const baseClasses =
     "w-full h-full font-semibold py-4 rounded-2xl text-base sm:text-xl transition-colors duration-200 shadow-lg transform active:scale-95 flex items-center justify-center";
 

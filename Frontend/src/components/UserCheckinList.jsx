@@ -1,12 +1,8 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { User, usersData } from "../data";
+import { usersData } from "../data";
 
-const UserAvatar: React.FC<{
-  avatar: string;
-  name: string;
-  checkedIn: boolean;
-}> = ({ avatar, name, checkedIn }) => (
+const UserAvatar = ({ avatar, name, checkedIn }) => (
   <div className="relative">
     <div className="w-12 h-12 rounded-full overflow-hidden">
       <img src={avatar} alt={name} className="w-full h-full object-cover" />
@@ -19,7 +15,7 @@ const UserAvatar: React.FC<{
   </div>
 );
 
-const UserStatus: React.FC<{ checkedIn: boolean }> = ({ checkedIn }) =>
+const UserStatus = ({ checkedIn }) =>
   checkedIn ? (
     <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center">
       <Check className="w-4 h-4 text-white" />
@@ -30,7 +26,7 @@ const UserStatus: React.FC<{ checkedIn: boolean }> = ({ checkedIn }) =>
     </span>
   );
 
-const UserCheckInItem: React.FC<{ user: User }> = ({ user }) => {
+const UserCheckInItem = ({ user }) => {
   const { name, avatar, checkedIn } = user;
   return (
     <div className="flex w items-center justify-between p-4 bg-white border-b border-gray-300 last:border-b-0 hover:bg-gray-50 transition-colors">
@@ -52,7 +48,7 @@ const UserCheckInItem: React.FC<{ user: User }> = ({ user }) => {
   );
 };
 
-const UserCheckInList: React.FC = () => {
+const UserCheckInList = () => {
   const totalCheckedIn = usersData.filter((u) => u.checkedIn).length;
 
   return (

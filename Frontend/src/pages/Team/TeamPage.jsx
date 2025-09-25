@@ -14,7 +14,7 @@ const teamData = {
     progressPercentage: 40,
   },
 };
-const TeamPage: React.FC = () => {
+const TeamPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile-first responsive container */}

@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
 import { Mail, Plus } from "lucide-react";
 
-interface Props {
-  emails: string[];
-  onEmailsChange: (emails: string[]) => void;
-}
-
-const EmailInput = ({ emails = [], onEmailsChange }: Props) => {
-  const [inputs, setInputs] = useState<string[]>(emails.length ? emails : [""]);
+const EmailInput = ({ emails = [], onEmailsChange }) => {
+  const [inputs, setInputs] = useState(emails.length ? emails : [""]);
 
   useEffect(() => {
     const validEmails = inputs.filter(
@@ -16,7 +11,7 @@ const EmailInput = ({ emails = [], onEmailsChange }: Props) => {
     onEmailsChange(validEmails);
   }, [inputs]);
 
-  const handleChange = (value: string, index: number) => {
+  const handleChange = (value, index) => {
     const newInputs = [...inputs];
     newInputs[index] = value;
     setInputs(newInputs);
@@ -26,7 +21,7 @@ const EmailInput = ({ emails = [], onEmailsChange }: Props) => {
     setInputs([...inputs, ""]);
   };
 
-  const handleRemoveField = (index: number) => {
+  const handleRemoveField = (index) => {
     const newInputs = inputs.filter((_, i) => i !== index);
     setInputs(newInputs.length ? newInputs : [""]);
   };

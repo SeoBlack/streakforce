@@ -2,15 +2,7 @@ import React from "react";
 import { Crown, Medal, Award } from "lucide-react";
 import { topPerformersData } from "../data";
 
-interface Performer {
-  id: number;
-  name: string;
-  avatar: string;
-  xp: number;
-  rank: number;
-}
-
-const getRankDisplay = (rank: number) => {
+const getRankDisplay = (rank) => {
   switch (rank) {
     case 1:
       return {
@@ -39,7 +31,7 @@ const getRankDisplay = (rank: number) => {
   }
 };
 
-const PerformerItem: React.FC<{ performer: Performer }> = ({ performer }) => {
+const PerformerItem = ({ performer }) => {
   const rankDisplay = getRankDisplay(performer.rank);
 
   return (
@@ -75,7 +67,7 @@ const PerformerItem: React.FC<{ performer: Performer }> = ({ performer }) => {
   );
 };
 
-const TopPerformers: React.FC = () => {
+const TopPerformers = () => {
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-300">
       <div className="mb-4">
@@ -85,10 +77,7 @@ const TopPerformers: React.FC = () => {
       {/* List */}
       <div className="space-y-1">
         {topPerformersData.map((performer) => (
-          <PerformerItem
-            key={performer.id}
-            performer={performer as Performer}
-          />
+          <PerformerItem key={performer.id} performer={performer} />
         ))}
       </div>
 

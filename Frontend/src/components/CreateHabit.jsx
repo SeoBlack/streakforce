@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { User, Users } from "lucide-react";
 
-interface HabitFormProps {
-  habitName: string;
-  duration: number;
-  privacy: "solo" | "team";
-  onHabitNameChange: (name: string) => void;
-  onDurationChange: (duration: number) => void;
-  onPrivacyChange: (privacy: "solo" | "team") => void;
-}
-
-const CreateHabit: React.FC<HabitFormProps> = ({
+const CreateHabit = ({
   habitName,
   duration,
   privacy,
@@ -22,12 +13,12 @@ const CreateHabit: React.FC<HabitFormProps> = ({
 
   const durations = [7, 30, 60];
 
-  const handleDurationSelect = (selectedDuration: number) => {
+  const handleDurationSelect = (selectedDuration) => {
     setCustomDuration("");
     onDurationChange(selectedDuration);
   };
 
-  const handleCustomDurationChange = (value: string) => {
+  const handleCustomDurationChange = (value) => {
     setCustomDuration(value);
     const numValue = parseInt(value);
     if (!isNaN(numValue) && numValue > 0) {

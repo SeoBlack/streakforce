@@ -49,26 +49,8 @@ export const habits = [
 ];
 
 // mock user data
-export interface UserData {
-  name: string;
-  title: string;
-  avatar: string;
-  xpPoints: {
-    current: number;
-    total: number;
-    nextLevel: number;
-  };
-  level: {
-    current: number;
-    title: string;
-  };
-  streak: {
-    current: number;
-    longest: number;
-  };
-}
 
-export const userData: UserData = {
+export const userData = {
   name: "Sarah Johnson",
   title: "Habit Champion",
   avatar:
@@ -88,14 +70,7 @@ export const userData: UserData = {
   },
 };
 
-interface User {
-  id: number;
-  name: string;
-  avatar: string;
-  checkedIn: boolean;
-  status: "checked-in" | "not-checked";
-}
-export const usersData: User[] = [
+export const usersData = [
   {
     id: 1,
     name: "Sarah Chen",

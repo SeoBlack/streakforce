@@ -1,17 +1,7 @@
 import React from "react";
 import { User, CheckCircle2 } from "lucide-react";
 
-interface TeamMemberProps {
-  name: string;
-  avatar?: string;
-  isCompleted: boolean;
-}
-
-const TeamMember: React.FC<TeamMemberProps> = ({
-  name,
-  avatar,
-  isCompleted,
-}) => {
+const TeamMember = ({ name, avatar, isCompleted }) => {
   return (
     <div className="flex flex-col items-center space-y-2">
       <div className="relative">
