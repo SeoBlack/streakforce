@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const Users = require("../models/User");
+const Habit = require("../models/Habit");
 
 // GET /users/:id
 const getUserProfile = async (req, res) => {
@@ -65,8 +66,31 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getUserAllHabits = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log("Fetching habits for userId:", userId);
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const habits = await Habit.find({ members: userId })
+      .populate("members", "fullName email")
+      .populate("createdBy", "fullName email");
+
+    res
+      .status(200)
+      .json({ message: "All habit affilited to the user", data: habits });
+  } catch (error) {
+    console.error("Get all habits by user error:", error);
+    res.status(500).json({ message: "Server error retrieving habits" });
+  }
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
   getAllUsers,
+  getUserAllHabits,
 };
