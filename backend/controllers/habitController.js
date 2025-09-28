@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const Habit = require("../models/Habit");
-const User = require("../models/User");
+const Users = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 
 // POST /habits
@@ -31,7 +31,7 @@ const createHabit = async (req, res) => {
       }
 
       // Validate member IDs
-      const foundMembers = await User.find({ email: { $in: members } });
+      const foundMembers = await Users.find({ email: { $in: members } });
       const foundMemberEmails = foundMembers.map((member) => member.email);
 
       const missingMembers = members.filter(
@@ -106,7 +106,9 @@ const getHabitDetails = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const habit = Habit.find((habit) => habit.id === id);
+    const habit = await Habit.findById(id)
+      .populate("members", "fullName email")
+      .populate("createdBy", "fullName email");
 
     if (!habit) {
       return res.status(404).json({ message: "Habit not found" });
@@ -114,7 +116,7 @@ const getHabitDetails = async (req, res) => {
 
     res.json({
       message: "Habit details retrieved successfully",
-      habit: habit,
+      data: habit,
     });
   } catch (error) {
     console.error("Get habit details error:", error);
@@ -122,7 +124,44 @@ const getHabitDetails = async (req, res) => {
   }
 };
 
+// get all habits
+const getAllHabits = async (req, res) => {
+  try {
+    const habits = await Habit.find();
+    res
+      .status(200)
+      .json({ message: "All habits retrieved successfully", data: habits });
+  } catch (error) {
+    console.error("Get all habits error:", error);
+    res.status(500).json({ message: "Server error retrieving habits" });
+  }
+};
+
+// DELETE /habits/:id
+const deleteHabit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const habit = await Habit.findById(id);
+
+    if (!habit) {
+      return res.status(404).json({ message: "Habit not found" });
+    }
+
+    if (habit.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({ message: "You are not authorized" });
+    }
+
+    await Habit.findByIdAndDelete(id);
+    res.status(200).json({ message: "Habit deleted successfully" });
+  } catch (error) {
+    console.error("Delete habit error:", error);
+    res.status(500).json({ message: "Server error deleting habit" });
+  }
+};
+
 module.exports = {
   createHabit,
   getHabitDetails,
+  getAllHabits,
+  deleteHabit,
 };
