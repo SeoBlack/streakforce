@@ -1,37 +1,12 @@
 const { v4: uuidv4 } = require("uuid");
-const users = [
-  {
-    id: "testuser1",
-    username: "test",
-    email: "test@test.com",
-    password: "test",
-    firstName: "test",
-    lastName: "test",
-  },
-  {
-    id: uuidv4(),
-    username: "test2",
-    email: "test2@test.com",
-    password: "test2",
-    firstName: "test2",
-    lastName: "test2",
-  },
-  {
-    id: uuidv4(),
-    username: "test3",
-    email: "test3@test.com",
-    password: "test3",
-    firstName: "test3",
-    lastName: "test3",
-  },
-];
+const Users = require("../models/User");
 
 // GET /users/:id
 const getUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = users.find((user) => user.id === id);
+    const user = Users.find((user) => user.id === id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -62,7 +37,7 @@ const updateUserProfile = async (req, res) => {
     delete updates.createdAt;
     delete updates.updatedAt;
 
-    const user = users.find((user) => user.id === id);
+    const user = Users.find((user) => user.id === id);
     Object.assign(user, updates);
 
     if (!user) {
@@ -80,7 +55,18 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await Users.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    console.error("Get user profile error:", error);
+    res.status(500).json({ message: "Server error retrieving user profile" });
+  }
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
+  getAllUsers,
 };
