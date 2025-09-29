@@ -6,9 +6,10 @@ const sendEmail = require("../utils/sendEmail");
 // POST /habits
 const createHabit = async (req, res) => {
   try {
-    const { name, description, duration, privacy, members } = req.body;
+    // const { userId } = req.params;
+    const { title, description, duration, privacy, members } = req.body;
 
-    if (!name || !description || !duration || !privacy) {
+    if (!title || !description || !duration || !privacy) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -30,8 +31,11 @@ const createHabit = async (req, res) => {
           .json({ message: "Team must include one member" });
       }
 
+      // Remove duplicate emails from request body
+      const uniqueMembers = [...new Set(members)];
+
       // Validate member IDs
-      const foundMembers = await Users.find({ email: { $in: members } });
+      const foundMembers = await Users.find({ email: { $in: uniqueMembers } });
       const foundMemberEmails = foundMembers.map((member) => member.email);
 
       const missingMembers = members.filter(
@@ -45,56 +49,59 @@ const createHabit = async (req, res) => {
         });
       }
 
-      validMembers = foundMembers.map((member) => member._id);
+      validMembers = foundMembers.map((member) => member._id.toJSON());
 
-      //send email notifications to members
+      //include creator in members
+      if (!validMembers.includes(req.user.id)) {
+        validMembers.push(req.user.id);
+      }
+
+      // Remove duplicate members
+      validMembers = [...new Set(validMembers)];
+
+      //send email notifications to members expect creator
       foundMembers.forEach((member) => {
-        sendEmail({
-          to: member.email,
-          subject: "New Habit Team Invitation",
-          data: {
-            recipientName: member.firstName || "there",
-            senderName: req.user.firstName || "A StreakForce user",
-            habitName: name,
-            habitDescription: description,
-            duration,
-            startDate: startDate.toDateString(),
-            endDate: endDate.toDateString(),
-          },
-        }).catch((err) =>
-          console.error(`Error sending email to ${member.email}:`, err)
-        );
+        if (member._id.toString() !== req.user.id) {
+          sendEmail({
+            to: member.email,
+            subject: "New Habit Team Invitation",
+            data: {
+              recipientName: member.firstName || "there",
+              senderName: req.user.firstName || "A StreakForce user",
+              habitName: title,
+              habitDescription: description,
+              duration,
+              startDate: startDate.toDateString(),
+              endDate: endDate.toDateString(),
+            },
+          }).catch((err) =>
+            console.error(`Error sending email to ${member.email}:`, err)
+          );
+        }
       });
-
-      // Create habit
-      const newHabit = new Habit({
-        user: req.user.id,
-        createdBy: req.user.id,
-        name,
-        description,
-        duration,
-        privacy,
-        members: validMembers,
-        startDate,
-        endDate,
-      });
-      await newHabit.save();
-
-      res.status(201).json({
-        message: "Team habit created successfully",
-        habit: {
-          id: uuidv4(),
-          name,
-          description,
-          duration,
-          privacy,
-          members: validMembers || [],
-          startDate,
-          endDate,
-          createdBy: req.user.id,
-        },
-      });
+    } else {
+      validMembers = [req.user.id];
     }
+
+    // Create habit
+    const newHabit = new Habit({
+      user: req.user.id,
+      createdBy: req.user.id,
+      title,
+      description,
+      duration,
+      privacy,
+      members: validMembers,
+      streak: 0,
+      startDate,
+      endDate,
+    });
+    await newHabit.save();
+
+    res.status(201).json({
+      message: "Team habit created successfully",
+      data: newHabit,
+    });
   } catch (error) {
     console.error("Create habit error:", error);
     res.status(500).json({ message: "Server error creating habit" });

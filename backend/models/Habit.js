@@ -7,13 +7,18 @@ const habitSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  name: {
+  title: {
     type: String,
     required: true,
   },
   description: {
     type: String,
     required: true,
+  },
+  frequency: {
+    type: String,
+    enum: ["daily", "weekly", "monthly"],
+    default: "daily",
   },
   duration: {
     type: Number,
@@ -24,12 +29,20 @@ const habitSchema = new mongoose.Schema({
     enum: ["team", "private"],
     required: true,
   },
+  streak: {
+    type: Number,
+    default: 0,
+  },
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
+      // required: true,
     },
   ],
+  lastCompleted: {
+    type: Date,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
