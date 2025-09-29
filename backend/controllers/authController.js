@@ -34,10 +34,10 @@ const googleAuth = async (req, res) => {
       const newUser = await User.create({
         email: userInfo.email,
         profile: {
-          firstName: userInfo.given_name,
-          lastName: userInfo.family_name,
-          profilePicture: userInfo.picture,
-          bio: userInfo.bio,
+          firstName: userInfo.given_name || "",
+          lastName: userInfo.family_name || "",
+          profilePicture: userInfo.picture || "",
+          bio: userInfo?.bio || "",
         },
         googleId: userid,
       });
