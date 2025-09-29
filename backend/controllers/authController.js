@@ -1,6 +1,59 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// POST /auth/google-auth
+//login user if exists else register user
+const googleAuth = async (req, res) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token) {
+      return res.status(400).json({ message: "access_token is required" });
+    }
+
+    // Use the access token to get user info from Google's API
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user info from Google");
+    }
+
+    const userInfo = await response.json();
+    console.log("Google user info:", userInfo);
+
+    const userid = userInfo.id;
+    const user = await User.findOne({ googleId: userid });
+
+    if (user) {
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.status(200).json({ token, user });
+    } else {
+      const newUser = await User.create({
+        email: userInfo.email,
+        profile: {
+          firstName: userInfo.given_name,
+          lastName: userInfo.family_name,
+          profilePicture: userInfo.picture,
+          bio: userInfo.bio,
+        },
+        googleId: userid,
+      });
+      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.status(200).json({ token, user: newUser });
+    }
+  } catch (err) {
+    console.log(err);
+    res
+      .status(400)
+      .json({ message: "Authentication failed", error: err.message });
+  }
+};
+
 // POST /auth/register
 const register = async (req, res) => {
   try {
@@ -106,4 +159,5 @@ module.exports = {
   register,
   login,
   verifyToken,
+  googleAuth,
 };

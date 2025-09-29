@@ -7,7 +7,8 @@ import Loader from "../../components/Loader";
 
 const LoginPage = () => {
   const [mode, setMode] = useState("login");
-  const { login, register, isAuthenticated, isLoading } = useAuth();
+  const { login, googleLogin, register, isAuthenticated, isLoading } =
+    useAuth();
   const navigate = useNavigate();
   const handleSubmit = (email, password, confirmPassword) => {
     if (mode === "login") {
@@ -24,7 +25,6 @@ const LoginPage = () => {
   };
 
   const handleForgotPassword = () => console.log("Forgot Password");
-  const handleGoogleLogin = () => console.log("Google Login");
 
   const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
   useEffect(() => {
@@ -60,7 +60,7 @@ const LoginPage = () => {
           mode={mode}
           onSubmit={handleSubmit}
           onForgotPassword={mode === "login" ? handleForgotPassword : undefined}
-          onGoogleLogin={handleGoogleLogin}
+          onGoogleLogin={() => googleLogin()}
           onSwitchMode={toggleMode}
         />
       </div>

@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   CHECKINS: "/checkins",
   AI: "/ai",
   SUBMISSIONS: "/submissions",
+  GOOGLE_AUTH: "/auth/google-auth",
 };
 
 export const API_BASE_URL = import.meta.env.VITE_BACKEND_ENDPOINT;

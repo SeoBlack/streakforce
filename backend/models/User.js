@@ -2,6 +2,27 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const userProfileSchema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  lastName: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  profilePicture: {
+    type: String,
+    default: "",
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+});
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -15,22 +36,20 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false, //not required for google auth
       minlength: 6,
       select: true,
     },
-    firstName: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-    lastName: {
-      type: String,
-      trim: true,
-      default: "",
+    profile: {
+      type: userProfileSchema,
+      default: {},
     },
     lastLogin: {
       type: Date,
+    },
+    googleId: {
+      type: String,
+      default: "",
     },
   },
   {
@@ -40,6 +59,7 @@ const userSchema = new mongoose.Schema(
       transform: (_doc, ret) => {
         //this will on each returned object
         delete ret.password;
+        delete ret.googleId;
         delete ret.__v;
         return ret;
       },
