@@ -1,5 +1,65 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { OAuth2Client } = require("google-auth-library");
+
+// POST /auth/google-auth
+//login user if exists else register user
+const googleAuth = async (req, res) => {
+  try {
+    const { credential, clientId } = req.body;
+    console.log(credential, clientId);
+    if (!credential) {
+      return res.status(400).json({ message: "id_token is required" });
+    }
+    const oauthClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await oauthClient.verifyIdToken({
+      idToken: credential,
+      audience: clientId,
+    });
+    console.log(ticket);
+    const userInfo = ticket.getPayload(); // contains sub, email, email_verified, given_name, family_name, picture
+    console.log("Google user info:", userInfo);
+
+    const userid = userInfo.sub;
+    let user = await User.findOne({
+      $or: [{ googleId: userid }, { email: userInfo.email }],
+    });
+
+    if (user) {
+      if (!user.googleId) {
+        user.googleId = userid;
+      }
+      user.lastLogin = new Date();
+      await user.save();
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.status(200).json({ token, user: user });
+    } else {
+      const newUser = await User.create({
+        email: userInfo.email,
+        profile: {
+          firstName: userInfo.given_name || "",
+          lastName: userInfo.family_name || "",
+          profilePicture: userInfo.picture || "",
+          bio: userInfo?.bio || "",
+        },
+        googleId: userid,
+      });
+      const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      newUser.lastLogin = new Date();
+      await newUser.save();
+      res.status(201).json({ token, user: newUser });
+    }
+  } catch (err) {
+    console.log(err);
+    res
+      .status(400)
+      .json({ message: "Authentication failed", error: err.message });
+  }
+};
 
 // POST /auth/register
 const register = async (req, res) => {
@@ -106,4 +166,5 @@ module.exports = {
   register,
   login,
   verifyToken,
+  googleAuth,
 };

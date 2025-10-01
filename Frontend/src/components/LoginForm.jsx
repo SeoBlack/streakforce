@@ -4,6 +4,7 @@ import Button from "./Button";
 import SocialLogin from "./SocialLogin";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { GoogleLogin } from "@react-oauth/google";
 
 const AuthForm = ({
   mode,
@@ -134,7 +135,12 @@ const AuthForm = ({
       </div>
 
       {/* Social Login */}
-      <SocialLogin onGoogleLogin={onGoogleLogin} />
+      <GoogleLogin
+        onSuccess={onGoogleLogin}
+        onError={() => {
+          console.log("Login Failed");
+        }}
+      />
 
       {/* Switch Mode */}
       <div className="mt-4 text-center">

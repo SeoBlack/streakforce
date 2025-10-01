@@ -51,6 +51,8 @@ export const habits = [
 // mock user data
 
 export const userData = {
+  id: 1,
+  email: "sarah.johnson@example.com",
   name: "Sarah Johnson",
   title: "Habit Champion",
   avatar:

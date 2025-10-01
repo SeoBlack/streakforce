@@ -10,29 +10,38 @@ import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
 import ProfilePage from "./pages/profile/Profile";
 import TeamPage from "./pages/Team/TeamPage";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function App() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  if (!clientId) {
+    console.error(
+      "VITE_GOOGLE_CLIENT_ID is not set; Google Login will not work."
+    );
+  }
   return (
-    <AuthProvider>
-      <div className="App">
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AuthLayout />}>
-              <Route index element={<WelcomePage />} />
-              <Route path="login" element={<LoginPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
-            <Route element={<MainLayout />}>
-              <Route path="home" element={<HomePage />} />
-              <Route path="submission" element={<Submission />} />
-              <Route path="create-challenge" element={<CreateChallenge />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="team" element={<TeamPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={clientId}>
+      <AuthProvider>
+        <div className="App">
+          <BrowserRouter>
+            <Routes>
+              <Route element={<AuthLayout />}>
+                <Route index element={<WelcomePage />} />
+                <Route path="login" element={<LoginPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
+              <Route element={<MainLayout />}>
+                <Route path="home" element={<HomePage />} />
+                <Route path="submission" element={<Submission />} />
+                <Route path="create-challenge" element={<CreateChallenge />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="team" element={<TeamPage />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

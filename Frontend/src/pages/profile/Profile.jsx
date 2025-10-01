@@ -3,6 +3,7 @@ import ProgressComponent from "../../components/ProgressComponent";
 import HabitsSection from "../../components/HabitsSection";
 import { userData, habits } from "../../data";
 import { useAuth } from "../../context/useAuth";
+import UserAvatar from "../../components/UserAvatar";
 
 const ProfilePage = () => {
   const { logout } = useAuth();
@@ -29,13 +30,7 @@ const ProfilePage = () => {
 
           <div className="text-center mt-8">
             <div className="relative inline-block mb-4">
-              <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-orange-400 ring-offset-2 sm:w-28 sm:h-28">
-                <img
-                  src={userData.avatar}
-                  alt={userData.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <UserAvatar userEmail={userData.email} size="md" />
               <div className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full p-2 border-2 border-white">
                 <Trophy className="w-4 h-4 text-yellow-700" />
               </div>
