@@ -9,7 +9,7 @@ import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
 import ProfilePage from "./pages/profile/Profile";
 import TeamPage from "./pages/Team/TeamPage";
-
+import ProfileEditPage from "./components/ProfileEditPage";
 function App() {
   return (
     <div className="App">
@@ -26,6 +26,8 @@ function App() {
             <Route path="create-challenge" element={<CreateChallenge />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="team" element={<TeamPage />} />
+            <Route path ="profilepage" element={<ProfileEditPage />} />
+
           </Route>
         </Routes>
       </BrowserRouter>
