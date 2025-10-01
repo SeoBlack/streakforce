@@ -1,4 +1,4 @@
-import React from "react";
+
 import { FaPen, FaCog } from "react-icons/fa";
 
 const ProfileEditPage = () => {
