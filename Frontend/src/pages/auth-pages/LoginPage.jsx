@@ -60,7 +60,7 @@ const LoginPage = () => {
           mode={mode}
           onSubmit={handleSubmit}
           onForgotPassword={mode === "login" ? handleForgotPassword : undefined}
-          onGoogleLogin={() => googleLogin()}
+          onGoogleLogin={googleLogin}
           onSwitchMode={toggleMode}
         />
       </div>

@@ -13,8 +13,14 @@ import TeamPage from "./pages/Team/TeamPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 function App() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  if (!clientId) {
+    console.error(
+      "VITE_GOOGLE_CLIENT_ID is not set; Google Login will not work."
+    );
+  }
   return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={clientId}>
       <AuthProvider>
         <div className="App">
           <BrowserRouter>

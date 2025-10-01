@@ -1,8 +1,6 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import { AUTH_ACTIONS, initialState, authReducer } from "./authConstants";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/api";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useGoogleLogin } from "@react-oauth/google";
 
 // Create Auth Context
 const AuthContext = createContext();
@@ -10,22 +8,6 @@ const AuthContext = createContext();
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  const loginWithGoogle = useGoogleLogin({
-    onSuccess: async (codeResponse) => {
-      const { access_token } = codeResponse;
-      const response = await apiCall(API_ENDPOINTS.GOOGLE_AUTH, {
-        method: "POST",
-        body: JSON.stringify({ access_token }),
-      });
-      if (response.success === false) {
-        return response;
-      }
-      const { token, user } = response;
-      localStorage.setItem("token", token);
-      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: { user, token } });
-      return { success: true, user };
-    },
-  });
 
   // Helper function to make authenticated API calls
   const apiCall = async (url, options = {}) => {
@@ -49,9 +31,31 @@ export const AuthProvider = ({ children }) => {
 
     return await response.json();
   };
-  const googleLogin = () => {
-    dispatch({ type: AUTH_ACTIONS.LOGIN_START });
-    loginWithGoogle();
+  const googleLogin = async (credential) => {
+    try {
+      dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+      const response = await apiCall(API_ENDPOINTS.GOOGLE_AUTH, {
+        method: "POST",
+        body: JSON.stringify({
+          credential: credential.credential,
+          clientId: credential.clientId,
+        }),
+      });
+      console.log(response);
+      if (response.success === false) {
+        return response;
+      }
+      const { token, user } = response;
+      localStorage.setItem("token", token);
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: { user, token } });
+      return { success: true, user };
+    } catch (error) {
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_FAILURE,
+        payload: error.message,
+      });
+      return { success: false, error: error.message };
+    }
   };
 
   // Login function
