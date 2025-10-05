@@ -12,17 +12,25 @@ const sendEmail = async ({ to, subject, data }) => {
       },
     });
 
-    const template = path.join(__dirname, "invite.html");
-    let htmlContent = require("fs").readFileSync(template, "utf8");
+    const templatePath = path.join(__dirname, "invite.html");
+    if (!sendEmail._tmpl) {
+      sendEmail._tmpl = fs.readFileSync(templatePath, "utf8");
+    }
 
-    htmlContent = htmlContent
-      .replace("{{recipientName}}", data.recipientName)
-      .replace("{{senderName}}", data.senderName)
-      .replace("{{habitName}}", data.habitName)
-      .replace("{{habitDescription}}", data.habitDescription)
-      .replace("{{duration}}", data.duration)
-      .replace("{{startDate}}", data.startDate)
-      .replace("{{endDate}}", data.endDate);
+    const tokens = {
+      recipientName: data.recipientName ?? "",
+      senderName: data.senderName ?? "",
+      habitName: data.habitName ?? "",
+      habitDescription: data.habitDescription ?? "",
+      duration: String(data.duration ?? ""),
+      startDate: data.startDate ?? "",
+      endDate: data.endDate ?? "",
+    };
+    const htmlContent = sendEmail._tmpl.replace(
+      /{{(\w+)}}/g,
+      (_, key) => tokens[key] ?? ""
+    );
+
     const info = await transporter.sendMail({
       from: `"Habit Tracker Team" <${process.env.EMAIL_USERNAME}>`,
       to,
@@ -36,7 +44,7 @@ const sendEmail = async ({ to, subject, data }) => {
         },
       ],
     });
-    console.log(`Email sent to ${to}`);
+    console.log(`Email sent to ${info.messageId}`);
   } catch (error) {
     console.error("Error sending email:", error.message);
     throw new Error("Email could not be sent");
