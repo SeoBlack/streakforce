@@ -3,6 +3,7 @@ const {
   register,
   login,
   verifyToken,
+  googleAuth,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -15,5 +16,8 @@ router.post("/login", login);
 
 // GET /auth/verify
 router.get("/verify", verifyToken);
+
+// POST /auth/google-auth
+router.post("/google-auth", googleAuth);
 
 module.exports = router;

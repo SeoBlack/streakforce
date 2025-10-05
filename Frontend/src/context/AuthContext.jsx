@@ -31,6 +31,32 @@ export const AuthProvider = ({ children }) => {
 
     return await response.json();
   };
+  const googleLogin = async (credential) => {
+    try {
+      dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+      const response = await apiCall(API_ENDPOINTS.GOOGLE_AUTH, {
+        method: "POST",
+        body: JSON.stringify({
+          credential: credential.credential,
+          clientId: credential.clientId,
+        }),
+      });
+      console.log(response);
+      if (response.success === false) {
+        return response;
+      }
+      const { token, user } = response;
+      localStorage.setItem("token", token);
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: { user, token } });
+      return { success: true, user };
+    } catch (error) {
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_FAILURE,
+        payload: error.message,
+      });
+      return { success: false, error: error.message };
+    }
+  };
 
   // Login function
   const login = async (email, password) => {
@@ -177,6 +203,7 @@ export const AuthProvider = ({ children }) => {
     clearError,
     updateProfile,
     apiCall,
+    googleLogin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
