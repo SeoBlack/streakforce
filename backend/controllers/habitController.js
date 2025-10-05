@@ -6,15 +6,20 @@ const sendEmail = require("../utils/sendEmail");
 // POST /habits
 const createHabit = async (req, res) => {
   try {
-    // const { userId } = req.params;
+    const { userId } = req.params;
     const { title, description, duration, privacy, members } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
 
     if (!title || !description || !duration || !privacy) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (!req.user?.id) {
-      return res.status(401).json({ message: "Unauthorized" });
+    const creator = await Users.findById(userId);
+    if (!creator) {
+      return res.status(404).json({ message: "Creator not found" });
     }
 
     const today = new Date();
@@ -24,6 +29,7 @@ const createHabit = async (req, res) => {
     endDate.setDate(startDate.getDate() + duration - 1);
 
     let validMembers = [];
+
     if (privacy === "team") {
       if (!members || !Array.isArray(members) || members.length === 0) {
         return res
@@ -41,33 +47,34 @@ const createHabit = async (req, res) => {
       const missingMembers = members.filter(
         (email) => !foundMemberEmails.includes(email)
       );
+
       if (missingMembers.length > 0) {
         return res.status(400).json({
           message: `${missingMembers.join(
             ", "
-          )} are not the member of StreakForce.`,
+          )} are not members of StreakForce.`,
         });
       }
 
       validMembers = foundMembers.map((member) => member._id.toJSON());
 
-      //include creator in members
-      if (!validMembers.includes(req.user.id)) {
-        validMembers.push(req.user.id);
+      // Include creator
+      if (!validMembers.includes(userId)) {
+        validMembers.push(userId);
       }
 
-      // Remove duplicate members
+      // Remove duplicates
       validMembers = [...new Set(validMembers)];
 
-      //send email notifications to members expect creator
+      // Send email notifications (excluding creator)
       foundMembers.forEach((member) => {
-        if (member._id.toString() !== req.user.id) {
+        if (member._id.toString() !== userId) {
           sendEmail({
             to: member.email,
             subject: "New Habit Team Invitation",
             data: {
               recipientName: member.firstName || "there",
-              senderName: req.user.firstName || "A StreakForce user",
+              senderName: creator.firstName || "A StreakForce user",
               habitName: title,
               habitDescription: description,
               duration,
@@ -80,13 +87,13 @@ const createHabit = async (req, res) => {
         }
       });
     } else {
-      validMembers = [req.user.id];
+      validMembers = [userId];
     }
 
     // Create habit
     const newHabit = new Habit({
-      user: req.user.id,
-      createdBy: req.user.id,
+      user: userId,
+      createdBy: userId,
       title,
       description,
       duration,
@@ -96,15 +103,17 @@ const createHabit = async (req, res) => {
       startDate,
       endDate,
     });
+
     await newHabit.save();
 
     res.status(201).json({
-      message: "Team habit created successfully",
+      message: "Habit created successfully",
       data: newHabit,
+      success: true,
     });
   } catch (error) {
     console.error("Create habit error:", error);
-    res.status(500).json({ message: "Server error creating habit" });
+    res.status(500).json({ success: false, message: "Error creating habit" });
   }
 };
 

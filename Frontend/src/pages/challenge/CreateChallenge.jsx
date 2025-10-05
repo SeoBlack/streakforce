@@ -3,20 +3,47 @@ import { useState } from "react";
 import CreateHabit from "../../components/CreateHabit";
 import EmailInput from "../../components/EmailInput";
 import Button from "../../components/Button";
+import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const CreateChallenge = () => {
   const [habitName, setHabitName] = useState("");
   const [duration, setDuration] = useState(30);
   const [privacy, setPrivacy] = useState("team");
   const [emails, setEmails] = useState([]);
+  const { user, apiCall } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log("Submitting challenge:", {
-      habitName,
-      duration,
-      privacy,
-      emails,
-    });
+  const handleSubmit = async () => {
+    if (!habitName || !duration || !privacy) {
+      alert("Please fill in all the required fields.");
+      return;
+    }
+    if (!user?._id) {
+      alert("User not found");
+      return;
+    }
+    const habitData = {
+      title: habitName,
+      duration: duration,
+      privacy: privacy,
+      description: habitName,
+      members: emails,
+    };
+    console.log("habitData", habitData);
+    console.log("user._id", user._id);
+    try {
+      const response = await apiCall(`/habits/${user._id}`, {
+        method: "POST",
+        body: JSON.stringify(habitData),
+      });
+      console.log("Habit created:", response);
+      alert("Habit created successfully!");
+      navigate("/team");
+    } catch (error) {
+      console.error("Error creating habit:", error);
+      alert(error.message || "Failed to create habit.");
+    }
   };
 
   return (
