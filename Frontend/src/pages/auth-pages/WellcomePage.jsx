@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../../assets/logo.svg";
 import Image from "../../assets/wellcome-image.png";
-import Button from "../../components/Button";
+import Button from "../../components/UI/Button";
 
 const WelcomePage = () => {
   return (

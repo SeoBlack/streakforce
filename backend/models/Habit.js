@@ -7,6 +7,10 @@ const habitSchema = new mongoose.Schema({
     ref: "Users",
     required: true,
   },
+  icon: {
+    type: String,
+    required: false,
+  },
   title: {
     type: String,
     required: true,
@@ -26,7 +30,7 @@ const habitSchema = new mongoose.Schema({
   },
   privacy: {
     type: String,
-    enum: ["team", "private"],
+    enum: ["team", "solo"],
     required: true,
   },
   streak: {
