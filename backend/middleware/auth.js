@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const Users = require("../models/User");
 
+// Middleware to protect routes
 const auth = async (req, res, next) => {
   try {
     //handle auth
@@ -17,7 +18,8 @@ const auth = async (req, res, next) => {
     req.token = token;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token is not valid" });
+    console.error("Authentication error:", error);
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
 
