@@ -5,6 +5,8 @@ import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
 import WelcomePage from "./pages/auth-pages/WellcomePage";
 import LoginPage from "./pages/auth-pages/LoginPage";
+import ForgotPasswordPage from "./pages/auth-pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth-pages/ResetPasswordPage";
 import HomePage from "./pages/home/HomePage";
 import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
@@ -28,31 +30,37 @@ function App() {
     <GoogleOAuthProvider clientId={clientId}>
       <AuthProvider>
         <HabitProvider>
-          <CheckinProvider>
-            <ToastContainer />
-            <div className="App">
-              <BrowserRouter>
-                <Routes>
-                  <Route element={<AuthLayout />}>
-                    <Route index element={<WelcomePage />} />
-                    <Route path="login" element={<LoginPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Route>
-                  <Route element={<MainLayout />}>
-                    <Route path="home" element={<HomePage />} />
-                    <Route path="submission" element={<Submission />} />
-                    <Route
-                      path="create-challenge"
-                      element={<CreateChallenge />}
-                    />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="habits" element={<AllHabitsPage />} />
-                    <Route path="habits/:id" element={<HabitsPage />} />
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </div>
-          </CheckinProvider>
+          <ToastContainer />
+          <div className="App">
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AuthLayout />}>
+                  <Route index element={<WelcomePage />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route
+                    path="forgot-password"
+                    element={<ForgotPasswordPage />}
+                  />
+                  <Route
+                    path="reset-password"
+                    element={<ResetPasswordPage />}
+                  />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+                <Route element={<MainLayout />}>
+                  <Route path="home" element={<HomePage />} />
+                  <Route path="submission" element={<Submission />} />
+                  <Route
+                    path="create-challenge"
+                    element={<CreateChallenge />}
+                  />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="habits" element={<AllHabitsPage />} />
+                  <Route path="habits/:id" element={<HabitsPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </div>
         </HabitProvider>
       </AuthProvider>
     </GoogleOAuthProvider>

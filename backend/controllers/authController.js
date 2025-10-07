@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { OAuth2Client } = require("google-auth-library");
+const sendEmail = require("../utils/sendEmail");
 
 // POST /auth/google-auth
 //login user if exists else register user
@@ -162,9 +163,77 @@ const verifyToken = async (req, res) => {
   res.json({ user: user });
 };
 
+// forgot password
+// POST /auth/forgot-password
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    await sendEmail({
+      to: email,
+      subject: "Forgot Password",
+      data: {
+        resetPasswordLink: `${process.env.FRONTEND_URL}/reset-password?token=${token}`,
+      },
+      template: "forgotPassword",
+    });
+    res.json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ message: "Server error during forgot password" });
+  }
+};
+
+// reset password
+// POST /auth/reset-password/:token
+const resetPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const token = req.params.token;
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    if (!token) {
+      return res.status(400).json({ message: "Token is required" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    user.password = password;
+    await user.save();
+
+    res.json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Reset link has expired" });
+    }
+    res.status(500).json({ message: "Server error during password reset" });
+  }
+};
+
 module.exports = {
   register,
   login,
   verifyToken,
   googleAuth,
+  forgotPassword,
+  resetPassword,
 };

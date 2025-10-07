@@ -24,7 +24,9 @@ const LoginPage = () => {
     }
   };
 
-  const handleForgotPassword = () => console.log("Forgot Password");
+  const handleForgotPassword = () => {
+    navigate("/forgot-password");
+  };
 
   const toggleMode = () => setMode(mode === "login" ? "signup" : "login");
   useEffect(() => {
