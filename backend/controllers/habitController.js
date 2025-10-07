@@ -6,8 +6,9 @@ const sendEmail = require("../utils/sendEmail");
 // POST /habits
 const createHabit = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { title, description, duration, privacy, members } = req.body;
+    //get user id from request that was attached in the auth middleware
+    const userId = req.user.id;
+    const { title, description, duration, privacy, members, icon } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -102,6 +103,7 @@ const createHabit = async (req, res) => {
       streak: 0,
       startDate,
       endDate,
+      icon,
     });
 
     await newHabit.save();
@@ -142,8 +144,12 @@ const getHabitDetails = async (req, res) => {
 
 // get all habits
 const getAllHabits = async (req, res) => {
+  console.log(req.user);
   try {
-    const habits = await Habit.find();
+    //get all habits that the user is a member of
+    const userId = req.user.id;
+
+    const habits = await Habit.find({ members: { $in: [userId] } });
     res
       .status(200)
       .json({ message: "All habits retrieved successfully", data: habits });

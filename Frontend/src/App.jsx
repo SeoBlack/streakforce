@@ -9,8 +9,12 @@ import HomePage from "./pages/home/HomePage";
 import NotFoundPage from "./pages/NotFound";
 import CreateChallenge from "./pages/challenge/CreateChallenge";
 import ProfilePage from "./pages/profile/Profile";
-import TeamPage from "./pages/Team/TeamPage";
+import TeamPage from "./pages/Habits/HabitPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import HabitProvider from "./context/HabitContext";
+import { ToastContainer } from "react-toastify";
+import HabitsPage from "./pages/Habits/HabitPage";
+import AllHabitsPage from "./pages/Habits/AllHabitsPage";
 
 function App() {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -22,24 +26,31 @@ function App() {
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <AuthProvider>
-        <div className="App">
-          <BrowserRouter>
-            <Routes>
-              <Route element={<AuthLayout />}>
-                <Route index element={<WelcomePage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Route>
-              <Route element={<MainLayout />}>
-                <Route path="home" element={<HomePage />} />
-                <Route path="submission" element={<Submission />} />
-                <Route path="create-challenge" element={<CreateChallenge />} />
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="team" element={<TeamPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </div>
+        <HabitProvider>
+          <ToastContainer />
+          <div className="App">
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AuthLayout />}>
+                  <Route index element={<WelcomePage />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+                <Route element={<MainLayout />}>
+                  <Route path="home" element={<HomePage />} />
+                  <Route path="submission" element={<Submission />} />
+                  <Route
+                    path="create-challenge"
+                    element={<CreateChallenge />}
+                  />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="habits" element={<AllHabitsPage />} />
+                  <Route path="habits/:id" element={<HabitsPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </HabitProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   );

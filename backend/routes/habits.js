@@ -10,13 +10,13 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 // POST /habits
-router.post("/:userId", auth, createHabit);
+router.post("/", auth, createHabit);
 
 // GET /habits/:id
 router.get("/:id", auth, getHabitDetails);
 
 // GET /habits
-router.get("/", getAllHabits);
+router.get("/", auth, getAllHabits);
 
 // DELETE /habits/:id
 router.delete("/:id", auth, deleteHabit);
