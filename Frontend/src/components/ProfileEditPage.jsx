@@ -1,126 +1,286 @@
-import React from "react";
-import { FaPen, FaCog } from "react-icons/fa";
+import React, { useState, useRef } from "react";
+import { X, Camera, Shuffle, Upload, User, Mail, FileText } from "lucide-react";
+import Avatar, { genConfig } from "react-nice-avatar";
+import { useAuth } from "../context/useAuth";
+import Input from "./UI/Input";
+import Button from "./UI/Button";
 
-const ProfileEditPage = () => {
-  const [nameEditing, setNameEditing] = React.useState(false);
-  const [formData, setFormData] = React.useState({
-    role: "Habit Champion ⚡",
-    email: "",
-    phone: "",
-    password: "",
+const ProfileEditPage = ({ handleCloseEditProfile }) => {
+  const { user, updateProfile } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [avatarMode, setAvatarMode] = useState(
+    user?.profile?.profilePicture?.startsWith("http") ? "upload" : "generated"
+  );
+  const [avatarConfig, setAvatarConfig] = useState(
+    user?.profile?.avatarConfig || genConfig(user?.email)
+  );
+  const [uploadedAvatar, setUploadedAvatar] = useState(
+    user?.profile?.profilePicture?.startsWith("http")
+      ? user.profile.profilePicture
+      : ""
+  );
+  const [showAvatarOptions, setShowAvatarOptions] = useState(false);
+
+  const [formData, setFormData] = useState({
+    firstName: user?.profile?.firstName || "",
+    lastName: user?.profile?.lastName || "",
+    bio: user?.profile?.bio || "",
   });
-  const fileRef = React.useRef(null);
 
-  const handlePickAvatar = () => fileRef.current?.click();
-  const handleAvatarFile = (e) => {
-    const f = e.target.files?.[0];
-    if (f) console.log("Picked avatar:", f.name);
+  const fileRef = useRef(null);
+
+  const handleGenerateNewAvatar = () => {
+    const newConfig = genConfig();
+    setAvatarConfig(newConfig);
+    setAvatarMode("generated");
+    setUploadedAvatar("");
   };
-  const handleChange = (k) => (e) =>
-    setFormData((p) => ({ ...p, [k]: e.target.value }));
-  const handleSubmit = (e) => {
+
+  const handlePickAvatar = () => {
+    fileRef.current?.click();
+  };
+
+  const handleAvatarFile = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("File size should be less than 5MB");
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith("image/")) {
+        setError("Please upload an image file");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedAvatar(reader.result);
+        setAvatarMode("upload");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      // Prepare update data
+      const updateData = {
+        profile: {
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          bio: formData.bio.trim(),
+        },
+      };
+
+      // Add avatar data based on mode
+      if (avatarMode === "upload" && uploadedAvatar) {
+        updateData.profile.profilePicture = uploadedAvatar;
+        updateData.profile.avatarConfig = null;
+      } else if (avatarMode === "generated") {
+        updateData.profile.avatarConfig = avatarConfig;
+        updateData.profile.profilePicture = "";
+      }
+
+      const result = await updateProfile(updateData);
+
+      if (result.success) {
+        setSuccess("Profile updated successfully!");
+        setTimeout(() => {
+          handleCloseEditProfile();
+        }, 1500);
+      } else {
+        setError(result.error || "Failed to update profile");
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex items-start justify-center p-4">
+    <div className="min-h-screen w-full bg-gray-50 flex items-start justify-center p-4 py-8">
       {/* Card */}
-      <div className="relative w-full max-w-[360px] rounded-[22px] bg-[#F4F8FC] shadow-[0_3px_0_rgba(2,6,23,0.02),0_22px_40px_rgba(2,6,23,0.08)] ring-1 ring-black/5 px-5 pt-8 pb-6">
-        {/* Floating settings */}
+      <div className="relative w-full max-w-[480px] rounded-3xl bg-white shadow-xl ring-1 ring-gray-200 px-6 pt-8 pb-6">
+        {/* Close Button */}
         <button
-          aria-label="Open settings"
-          className="absolute top-4 right-4 h-9 w-9 grid place-items-center rounded-full bg-white shadow-[0_6px_16px_rgba(2,6,23,0.12)] hover:bg-slate-50 active:scale-95 transition"
+          aria-label="Close edit profile"
+          onClick={handleCloseEditProfile}
+          className="absolute top-4 right-4 h-10 w-10 grid place-items-center rounded-full bg-gray-100 hover:bg-gray-200 active:scale-95 transition"
         >
-          <FaCog className="text-slate-600" />
+          <X className="text-gray-600" size={20} />
         </button>
 
-        {/* Avatar */}
-        <div className="flex flex-col items-center">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Edit Profile</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Update your profile information
+          </p>
+        </div>
+
+        {/* Avatar Section */}
+        <div className="flex flex-col items-center mb-6">
           <div className="relative">
-            <img
-              src="https://randomuser.me/api/portraits/women/44.jpg"
-              alt="User avatar"
-              className="h-24 w-24 rounded-full object-cover ring-2 ring-emerald-500 ring-offset-2 ring-offset-[#F4F8FC] shadow"
-            />
+            {/* Avatar Display */}
+            <div className="h-24 w-24 rounded-full overflow-hidden ring-4 ring-orange-400 ring-offset-2 shadow-lg">
+              {avatarMode === "upload" && uploadedAvatar ? (
+                <img
+                  src={uploadedAvatar}
+                  alt="User avatar"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <Avatar
+                  style={{ width: "100%", height: "100%" }}
+                  {...avatarConfig}
+                />
+              )}
+            </div>
+
+            {/* Edit Avatar Button */}
             <button
-              aria-label="Edit avatar"
-              onClick={handlePickAvatar}
-              className="absolute -bottom-1 -right-1 h-7 w-7 grid place-items-center rounded-full bg-white shadow-[0_6px_18px_rgba(2,6,23,0.12)] hover:bg-slate-50 active:scale-95"
+              type="button"
+              onClick={() => setShowAvatarOptions(!showAvatarOptions)}
+              className="absolute -bottom-1 -right-1 h-8 w-8 grid place-items-center rounded-full bg-orange-500 shadow-lg hover:bg-orange-600 active:scale-95 transition"
             >
-              <FaPen className="text-slate-700 text-[11px]" />
+              <Camera className="text-white" size={16} />
             </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarFile}
-              className="sr-only"
-            />
           </div>
 
-          {/* Name */}
-          <div className="mt-3 flex items-center gap-2">
-            {nameEditing ? (
-              <input
-                aria-label="Edit name"
-                defaultValue="Sarah Johnson"
-                onBlur={() => setNameEditing(false)}
-                autoFocus
-                className="text-[21px] font-extrabold text-slate-900 bg-transparent border-b border-slate-300 focus:outline-none"
-              />
-            ) : (
-              <h1 className="text-[21px] font-extrabold text-slate-900">
-                Sarah Johnson
-              </h1>
-            )}
-            <button
-              aria-label="Edit name"
-              onClick={() => setNameEditing((v) => !v)}
-              className="h-6 w-6 grid place-items-center rounded-full hover:bg-slate-200/80 text-slate-600"
-            >
-              <FaPen className="text-[11px]" />
-            </button>
-          </div>
+          {/* Avatar Options */}
+          {showAvatarOptions && (
+            <div className="mt-3 flex gap-2 bg-gray-100 rounded-xl p-2">
+              <button
+                type="button"
+                onClick={handleGenerateNewAvatar}
+                className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700 shadow-sm"
+              >
+                <Shuffle size={16} />
+                Generate
+              </button>
+              <button
+                type="button"
+                onClick={handlePickAvatar}
+                className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700 shadow-sm"
+              >
+                <Upload size={16} />
+                Upload
+              </button>
+            </div>
+          )}
+
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarFile}
+            className="sr-only"
+          />
+
+          {/* User Email */}
+          <p className="mt-3 text-sm text-gray-500">{user?.email}</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-          {[
-            { key: "role", ph: "Your role", dotted: true },
-            { key: "email", ph: "email@email.com" },
-            { key: "phone", ph: "Phone number" },
-            { key: "password", ph: "********" },
-          ].map((f) => (
-            <label key={f.key} className="block">
-              <div className="flex items-center gap-2 rounded-[14px] bg-white ring-1 ring-slate-200 px-3 py-3 shadow-[0_1px_0_rgba(2,6,23,0.04),0_10px_20px_rgba(2,6,23,0.06)]">
-                <FaPen className="text-slate-400 text-xs shrink-0" />
-                <input
-                  type={f.key === "password" ? "password" : "text"}
-                  placeholder={f.ph}
-                  value={formData[f.key]}
-                  onChange={handleChange(f.key)}
-                  className={`w-full bg-transparent outline-none text-[14px] text-slate-700 placeholder-slate-400 ${
-                    f.dotted
-                      ? "underline decoration-dotted underline-offset-4"
-                      : ""
-                  }`}
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* First Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2 ml-2">
+              First Name
             </label>
-          ))}
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                <User className="text-gray-400" size={18} />
+              </div>
+              <Input
+                value={formData.firstName}
+                onChange={(value) => handleChange("firstName", value)}
+                placeholder="Enter your first name"
+                withIcon={true}
+                disabled={loading}
+              />
+            </div>
+          </div>
 
-          {/* Save */}
-          <button
-            type="submit"
-            className="relative mt-4 w-full h-12 rounded-[14px] font-semibold text-white tracking-wide
-                       bg-gradient-to-r from-[#1CD977] to-[#03A864]
-                       shadow-[0_10px_30px_rgba(3,168,100,0.3)]
-                       before:content-[''] before:absolute before:inset-x-6 before:top-[6px] before:h-6 before:rounded-full
-                       before:bg-[radial-gradient(90%_140%_at_50%_0%,_rgba(255,255,255,0.8),_rgba(255,255,255,0)_70%)]
-                       active:scale-[0.99] hover:opacity-95 transition"
-          >
-            SAVE
-          </button>
+          {/* Last Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2 ml-2">
+              Last Name
+            </label>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                <User className="text-gray-400" size={18} />
+              </div>
+              <Input
+                value={formData.lastName}
+                onChange={(value) => handleChange("lastName", value)}
+                placeholder="Enter your last name"
+                withIcon={true}
+                disabled={loading}
+              />
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2 ml-2">
+              Bio
+            </label>
+            <div className="relative">
+              <div className="absolute left-4 top-5 transform -translate-y-1/2">
+                <FileText className="text-gray-400" size={18} />
+              </div>
+              <textarea
+                value={formData.bio}
+                onChange={(e) => handleChange("bio", e.target.value)}
+                placeholder="Tell us about yourself..."
+                disabled={loading}
+                rows="3"
+                className="w-full pl-14 pr-4 py-4 bg-gray-300 border-0 rounded-xl text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white transition-all resize-none"
+              />
+            </div>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-xl text-sm">
+              {success}
+            </div>
+          )}
+
+          {/* Save Button */}
+          <div className="pt-2">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

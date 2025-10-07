@@ -8,6 +8,10 @@ const userProfileSchema = new mongoose.Schema({
   lastName: { type: String, trim: true, default: "" },
   profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
+  avatarConfig: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
 });
 
 // NEW: stats schema for XP, levels, and streaks
@@ -24,6 +28,18 @@ const userStatsSchema = new mongoose.Schema({
     current: { type: Number, default: 0 },
     longest: { type: Number, default: 0 },
     lastCheckIn: { type: Date },
+  },
+  avatarConfig: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
+  xpPoints: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
+  streak: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
   },
 });
 

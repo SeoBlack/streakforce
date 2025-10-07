@@ -3,6 +3,8 @@ import Avatar, { genConfig } from "react-nice-avatar";
 
 const getAvatarSize = (size) => {
   switch (size) {
+    case "xs":
+      return 4;
     case "sm":
       return 8;
     case "md":
@@ -14,13 +16,25 @@ const getAvatarSize = (size) => {
   }
 };
 
-export default function UserAvatar({ userEmail, avatarUrl, size = "sm" }) {
+export default function UserAvatar({
+  userEmail,
+  avatarUrl,
+  avatarConfig,
+  size = "sm",
+}) {
   const avatarSize = getAvatarSize(size);
+
+  // Determine which avatar to show
+  const showUploadedImage = avatarUrl && avatarUrl.startsWith("http");
+
+  // Use provided avatarConfig or generate from email
+  const config = avatarConfig || genConfig(userEmail);
+
   return (
     <div
       className={`w-[${avatarSize}rem] h-[${avatarSize}rem] rounded-full overflow-hidden ring-4 ring-orange-400 ring-offset-2`}
     >
-      {avatarUrl ? (
+      {showUploadedImage ? (
         <img
           src={avatarUrl}
           alt="User Avatar"
@@ -28,9 +42,8 @@ export default function UserAvatar({ userEmail, avatarUrl, size = "sm" }) {
         />
       ) : (
         <Avatar
-          size={avatarSize}
-          config={genConfig(userEmail)}
           style={{ width: `${avatarSize}rem`, height: `${avatarSize}rem` }}
+          {...config}
         />
       )}
     </div>
