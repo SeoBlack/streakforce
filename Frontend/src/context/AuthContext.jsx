@@ -183,6 +183,7 @@ export const AuthProvider = ({ children }) => {
 
   // Update user profile
   const updateProfile = async (userData) => {
+    console.log("userData", userData);
     const response = await apiCall(API_ENDPOINTS.UPDATE_PROFILE, {
       method: "PUT",
       body: JSON.stringify(userData),
@@ -219,28 +220,6 @@ export const AuthProvider = ({ children }) => {
     },
     [apiCall]
   );
-  const getUserProgress = async (userId) => {
-    if (!userId) {
-      return { success: false, error: "User ID is required" };
-    }
-
-    const response = await apiCall(`/users/${userId}`, {
-      method: "GET",
-    }).catch((error) => {
-      return { success: false, error: error.message };
-    });
-
-    if (response.success === false) {
-      return response;
-    }
-
-    dispatch({
-      type: AUTH_ACTIONS.LOGIN_SUCCESS,
-      payload: { user: response.user, token: state.token },
-    });
-
-    return { success: true, user: response.user };
-  };
 
   // Effect to verify token on app load
   useEffect(() => {
@@ -267,7 +246,6 @@ export const AuthProvider = ({ children }) => {
     googleLogin,
     forgotPassword,
     getProfileByUserId,
-    getUserProgress,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

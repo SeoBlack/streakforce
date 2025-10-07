@@ -8,6 +8,10 @@ const userProfileSchema = new mongoose.Schema({
   lastName: { type: String, trim: true, default: "" },
   profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
+  avatarConfig: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
 });
 
 // NEW: stats schema for XP, levels, and streaks

@@ -3,7 +3,6 @@ const {
   updateMyProfile,
   getMyProfile,
   getUserProfileById,
-  getUserProgress,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
 
@@ -17,7 +16,5 @@ router.put("/profile", auth, updateMyProfile);
 
 // GET /users/:id
 router.get("/:id", auth, getUserProfileById);
-
-router.get("/progress/:userId", auth, getUserProgress);
 
 module.exports = router;

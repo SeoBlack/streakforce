@@ -11,10 +11,7 @@ const getUserProfileById = async (req, res) => {
     }
     res.json({
       message: "User profile retrieved successfully",
-      user: {
-        ...user.profile.toObject(),
-        user_id: user._id,
-      },
+      user: user.toObject(),
     });
   } catch (error) {
     console.error("Get user profile by id error:", error);
@@ -34,7 +31,7 @@ const getMyProfile = async (req, res) => {
 
     res.json({
       message: "User profile retrieved successfully",
-      user: user,
+      user: user.toObject(),
     });
   } catch (error) {
     console.error("Get my profile error:", error);
@@ -82,7 +79,7 @@ const updateMyProfile = async (req, res) => {
 
     res.json({
       message: "User profile updated successfully",
-      user,
+      user: user.toObject(),
     });
   } catch (error) {
     console.error("Update my profile error:", error);
@@ -122,55 +119,10 @@ const getUserAllHabits = async (req, res) => {
   }
 };
 
-const getUserProgress = async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await Users.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Default values for new users
-    const xp = user.stats?.xp || { current: 0, total: 100 };
-    const level = user.stats?.level || {
-      current: 1,
-      title: "Beginner",
-    };
-    const streak = user.stats?.streak || {
-      current: 0,
-      longest: 0,
-    };
-
-    // XP to next level
-    const nextLevelXp = xp.total - xp.current;
-
-    res.status(200).json({
-      xpPoints: {
-        current: xp.current,
-        total: xp.total,
-        nextLevel: nextLevelXp,
-      },
-      level: {
-        current: level.current,
-        title: level.title,
-      },
-      streak: {
-        current: streak.current,
-        longest: streak.longest,
-      },
-    });
-  } catch (err) {
-    console.error("Error fetching user progress:", err);
-    res.status(500).json({ message: "Server error fetching progress" });
-  }
-};
-
 module.exports = {
   getMyProfile,
   updateMyProfile,
   getUserProfileById,
   getAllUsers,
   getUserAllHabits,
-  getUserProgress,
 };
