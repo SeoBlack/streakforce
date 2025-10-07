@@ -46,7 +46,7 @@ const CreateHabit = ({
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-orange-500 rounded flex items-center justify-center">
             <button onClick={handleShowEmojiPicker}>{selectedEmoji}</button>
           </div>
-          <div className="absolute right-4 top-1/2 bg-white">
+          <div className="absolute right-0 top-full mt-2 z-50 bg-white shadow-lg rounded-lg">
             {showEmojiPicker && (
               <EmojiePicker handleEmojiSelect={handleEmojiSelect} />
             )}

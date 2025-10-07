@@ -29,7 +29,7 @@ const HabitItem = ({ habit, fullInfo = false }) => {
             {habit.description}
           </p>
           <div className="flex items-center space-x-1 text-gray-500">
-            {habit.members.length}
+            {habit.members?.length || 0}
             <Users className="ml-1 w-4 h-4 text-gray-500" />
           </div>
         </div>

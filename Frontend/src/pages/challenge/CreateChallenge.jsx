@@ -37,7 +37,7 @@ const CreateChallenge = () => {
       const response = await createHabit(habitData);
       if (response.success) {
         toast.success("Habit created successfully!");
-        navigate("/team");
+        navigate("/habits");
       } else {
         toast.error(response.error || "Failed to create habit.");
       }

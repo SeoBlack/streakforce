@@ -9,10 +9,10 @@ const HabitsPage = () => {
   const { selectedHabit, getHabitById } = useHabits();
 
   useEffect(() => {
-    if (!selectedHabit || selectedHabit?._id !== id) {
+    if (id) {
       getHabitById(id);
     }
-  }, [id, selectedHabit, getHabitById]);
+  }, [id, getHabitById]);
 
   const streak = selectedHabit?.streak || 0;
   const duration = selectedHabit?.duration || 0; // total planned days
