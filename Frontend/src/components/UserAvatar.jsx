@@ -3,6 +3,8 @@ import Avatar, { genConfig } from "react-nice-avatar";
 
 const getAvatarSize = (size) => {
   switch (size) {
+    case "xxs":
+      return 3;
     case "xs":
       return 4;
     case "sm":
@@ -21,6 +23,7 @@ export default function UserAvatar({
   avatarUrl,
   avatarConfig,
   size = "sm",
+  showRing = true,
 }) {
   const avatarSize = getAvatarSize(size);
 
@@ -32,7 +35,9 @@ export default function UserAvatar({
 
   return (
     <div
-      className={`w-[${avatarSize}rem] h-[${avatarSize}rem] rounded-full overflow-hidden ring-4 ring-orange-400 ring-offset-2`}
+      className={`w-[${avatarSize}rem] h-[${avatarSize}rem] rounded-full overflow-hidden ${
+        showRing ? "ring-4 ring-orange-400 ring-offset-2" : ""
+      }`}
     >
       {showUploadedImage ? (
         <img

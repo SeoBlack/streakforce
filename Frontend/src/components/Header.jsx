@@ -21,7 +21,8 @@ export default function Header() {
         <UserAvatar
           avatarConfig={user?.profile?.avatarConfig}
           profilePicture={user?.profile?.profilePicture}
-          size="xs"
+          size="xxs"
+          showRing={false}
         />
       </div>
     </div>
