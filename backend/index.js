@@ -4,6 +4,8 @@ const cors = require("cors");
 const logger = require("./middleware/logger");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
+const updateStreak = require("./utils/updateStreak");
+const cron = require("node-cron");
 
 dotenv.config();
 
@@ -37,6 +39,17 @@ app.use("/users", userRoutes);
 app.use("/habits", habitRoutes);
 app.use("/checkins", checkInRoutes);
 app.use("/ai", aiRoutes);
+
+// //streak tracking and update
+// cron.schedule("* * * * * *", function () {
+//   console.log("running a task every second");
+//   updateStreak();
+// });
+//streak tracking and update
+cron.schedule("0 0 * * *", function () {
+  console.log("running a task every day");
+  updateStreak();
+});
 
 // Server
 const PORT = process.env.PORT || 5000;

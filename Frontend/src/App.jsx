@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import Submission from "./components/submission";
+import Submission from "./components/Submission";
 import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
 import WelcomePage from "./pages/auth-pages/WellcomePage";
@@ -14,6 +14,7 @@ import ProfilePage from "./pages/profile/Profile";
 import TeamPage from "./pages/Habits/HabitPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import HabitProvider from "./context/HabitContext";
+import CheckinProvider from "./context/CheckinContext";
 import { ToastContainer } from "react-toastify";
 import HabitsPage from "./pages/Habits/HabitPage";
 import AllHabitsPage from "./pages/Habits/AllHabitsPage";

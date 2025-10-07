@@ -1,18 +1,33 @@
 import React, { useEffect } from "react";
 import UserCheckInList from "../../components/UserCheckinList";
-import { Flame, BookOpen, Settings } from "lucide-react";
+import { Flame, Settings } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useHabits } from "../../context/habitContextBase";
+import Icon from "../../components/UI/Icon";
+import Button from "../../components/UI/Button";
+import { useCheckins } from "../../context/checkinContextBase";
+import { toast } from "react-toastify";
 
 const HabitsPage = () => {
   const { id } = useParams();
   const { selectedHabit, getHabitById } = useHabits();
+  const { submitCheckIn, isLoading, hasCheckedInToday } = useCheckins();
 
+  const hasCheckedIn = hasCheckedInToday(selectedHabit?._id);
   useEffect(() => {
     if (id) {
       getHabitById(id);
     }
   }, [id, getHabitById]);
+
+  const handleCheckIn = async () => {
+    try {
+      const checkinData = await submitCheckIn(selectedHabit?._id);
+      toast.success(checkinData?.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const streak = selectedHabit?.streak || 0;
   const duration = selectedHabit?.duration || 0; // total planned days
@@ -20,6 +35,7 @@ const HabitsPage = () => {
   const progressPercentage = duration
     ? Math.min(100, Math.round((completed / duration) * 100))
     : 0;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile-first responsive container */}
@@ -64,7 +80,11 @@ const HabitsPage = () => {
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
+                  <Icon
+                    iconName={selectedHabit?.aspect}
+                    size={6}
+                    rounded={false}
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
@@ -101,6 +121,20 @@ const HabitsPage = () => {
                 ></div>
               </div>
             </div>
+            {!hasCheckedIn && (
+              <Button
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-orange-400 to-color-1 hover:from-orange-500 hover:to-color-2 text-white font-semibold space-x-3"
+                onClick={() => handleCheckIn()}
+              >
+                Check In
+              </Button>
+            )}
+            {hasCheckedIn && (
+              <div className="w-full bg-green-100 rounded-lg h-12 flex items-center justify-center border-dashed border-green-500 border-2">
+                <h3 className="text-green-500 font-semibold ">Checked In</h3>
+              </div>
+            )}
           </div>
         </div>
         <div className="p-4 sm:p-6">
