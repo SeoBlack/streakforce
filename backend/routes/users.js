@@ -4,6 +4,7 @@ const {
   updateUserProfile,
   getAllUsers,
   getUserAllHabits,
+  getUserProgress,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
 
@@ -20,5 +21,7 @@ router.get("/", getAllUsers);
 
 // GET /users all habits
 router.get("/habits/:userId", auth, getUserAllHabits);
+
+router.get("/progress/:userId", auth, getUserProgress);
 
 module.exports = router;

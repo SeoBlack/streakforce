@@ -9,7 +9,7 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 // POST /checkins
-router.post("/", auth, submitCheckIn);
+router.post("/:userId", auth, submitCheckIn);
 // GET /checkins
 router.get("/", auth, getCheckIns);
 // GET /checkins/habit/:habitId
