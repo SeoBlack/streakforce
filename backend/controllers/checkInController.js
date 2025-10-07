@@ -1,47 +1,54 @@
-const { v4: uuidv4 } = require("uuid");
+const CheckIn = require("../models/CheckIn");
 
-const checkIns = [
-  {
-    id: "testcheckin1",
-    habitId: "1",
-    checkInDate: "2025-01-01",
-    userId: "1",
-  },
-
-  {
-    id: uuidv4(),
-    habitId: "2",
-    checkInDate: "2025-01-02",
-    userId: "2",
-  },
-];
 // POST /checkins
 const submitCheckIn = async (req, res) => {
   try {
-    const { habitId, checkInDate } = req.body;
-    if (!habitId || !checkInDate) {
-      return res
-        .status(400)
-        .json({ message: "habitId and checkInDate are required" });
+    //date is automatically added by the server
+    const { habitId } = req.body;
+    const userId = req.user.id;
+    if (!habitId) {
+      return res.status(400).json({ message: "habitId is required" });
     }
-    if (!req.user?.id) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const dt = new Date(checkInDate);
-    if (Number.isNaN(dt.getTime())) {
-      return res.status(400).json({ message: "checkInDate must be ISO-8601" });
+    //check if the user has already checked in today for the same habit
+    // Check if date is within today (start of day to end of day)
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const todayCheckIn = await CheckIn.findOne({
+      habitId: habitId,
+      userId: userId,
+      checkInDate: {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      },
+    });
+    console.log(todayCheckIn);
+    console.log(startOfDay);
+    console.log(endOfDay);
+    console.log(todayCheckIn?.checkInDate);
+    if (todayCheckIn) {
+      return res
+        .status(400)
+        .json({ message: "You have already checked in today for this habit" });
     }
+    const dt = new Date();
     const createdCheckIn = {
-      id: uuidv4(),
       habitId,
       checkInDate: dt.toISOString(),
-      userId: req.user.id,
+      userId: userId,
     };
-    checkIns.push(createdCheckIn);
+    const checkIn = await CheckIn.create(createdCheckIn);
+    await checkIn.save();
 
     res.status(201).json({
       message: "Check-in submitted successfully",
-      checkIn: checkIns[checkIns.length - 1],
+      checkIn: checkIn,
     });
   } catch (error) {
     console.error("Submit check-in error:", error);
@@ -49,6 +56,25 @@ const submitCheckIn = async (req, res) => {
   }
 };
 
+// GET /checkins
+const getCheckIns = async (req, res) => {
+  //get checkins for a user
+  const checkIns = await CheckIn.find({ userId: req.user.id });
+  console.log(checkIns);
+  res.status(200).json(checkIns);
+};
+
+const getCheckInsByHabitId = async (req, res) => {
+  const { habitId } = req.params;
+  const checkIns = await CheckIn.find({
+    habitId: habitId,
+    userId: req.user.id,
+  });
+  res.status(200).json(checkIns);
+};
+
 module.exports = {
   submitCheckIn,
+  getCheckIns,
+  getCheckInsByHabitId,
 };

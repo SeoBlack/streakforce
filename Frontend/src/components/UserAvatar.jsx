@@ -15,7 +15,6 @@ const getAvatarSize = (size) => {
 };
 
 export default function UserAvatar({ userEmail, avatarUrl, size = "sm" }) {
-  console.log(userEmail);
   const avatarSize = getAvatarSize(size);
   return (
     <div

@@ -8,13 +8,13 @@ const createHabit = async (req, res) => {
   try {
     //get user id from request that was attached in the auth middleware
     const userId = req.user.id;
-    const { title, description, duration, privacy, members, icon } = req.body;
+    const { title, description, duration, privacy, members, aspect } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    if (!title || !description || !duration || !privacy) {
+    if (!title || !description || !duration || !privacy || !aspect) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -103,7 +103,7 @@ const createHabit = async (req, res) => {
       streak: 0,
       startDate,
       endDate,
-      icon,
+      aspect,
     });
 
     await newHabit.save();

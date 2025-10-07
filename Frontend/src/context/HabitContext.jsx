@@ -52,7 +52,7 @@ const HabitProvider = ({ children }) => {
   );
 
   const createHabit = useCallback(
-    async ({ title, description, duration, privacy, members = [], icon }) => {
+    async ({ title, description, duration, privacy, members = [], aspect }) => {
       setIsLoading(true);
       setError(null);
       try {
@@ -64,7 +64,7 @@ const HabitProvider = ({ children }) => {
             duration,
             privacy,
             members,
-            icon,
+            aspect,
           }),
         });
         const newHabit = response?.data;

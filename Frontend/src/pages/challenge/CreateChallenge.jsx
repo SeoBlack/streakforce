@@ -13,10 +13,15 @@ const CreateChallenge = () => {
   const [duration, setDuration] = useState(30);
   const [privacy, setPrivacy] = useState("team");
   const [emails, setEmails] = useState([]);
-  const [emoji, setEmoji] = useState("");
+  const [aspect, setAspect] = useState("health");
   const { createHabit } = useHabits();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    //go back to previous page
+    navigate(-1);
+  };
 
   const handleSubmit = async () => {
     if (!habitName || !duration || !privacy) {
@@ -30,7 +35,7 @@ const CreateChallenge = () => {
       privacy: privacy,
       description: habitDescription,
       members: emails,
-      icon: emoji,
+      aspect: aspect,
     };
     try {
       setLoading(true);
@@ -53,8 +58,9 @@ const CreateChallenge = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="max-w-5xl mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
+      <header className=" mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
         <button
+          onClick={handleGoBack}
           aria-label="Go back"
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
@@ -77,12 +83,12 @@ const CreateChallenge = () => {
               habitDescription={habitDescription}
               duration={duration}
               privacy={privacy}
-              emoji={emoji}
+              aspect={aspect}
               onHabitNameChange={setHabitName}
               onHabitDescriptionChange={setHabitDescription}
               onDurationChange={setDuration}
               onPrivacyChange={setPrivacy}
-              onEmojiSelect={setEmoji}
+              onAspectSelect={setAspect}
             />
           </div>
 

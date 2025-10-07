@@ -7,9 +7,9 @@ const habitSchema = new mongoose.Schema({
     ref: "Users",
     required: true,
   },
-  icon: {
+  aspect: {
     type: String,
-    required: false,
+    required: true,
   },
   title: {
     type: String,

@@ -1,24 +1,46 @@
 import React from "react";
-import { EmojiPicker } from "@ferrucc-io/emoji-picker";
-
-export default function EmojiePicker({ handleEmojiSelect }) {
+import CustomSelect from "./CustomSelect";
+import Icon from "./Icon";
+export default function EmojiePicker({ handleSelect, value }) {
+  const options = [
+    {
+      label: "Health",
+      value: "health",
+      icon: <Icon iconName="health" />,
+    },
+    {
+      label: "Career",
+      value: "career",
+      icon: <Icon iconName="career" />,
+    },
+    {
+      label: "Religion",
+      value: "religion",
+      icon: <Icon iconName="religion" />,
+    },
+    {
+      label: "Social",
+      value: "social",
+      icon: <Icon iconName="social" />,
+    },
+    {
+      label: "Finance",
+      value: "finance",
+      icon: <Icon iconName="finance" />,
+    },
+    {
+      label: "Growth",
+      value: "growth",
+      icon: <Icon iconName="growth" />,
+    },
+  ];
   return (
-    <EmojiPicker
-      onEmojiSelect={handleEmojiSelect}
-      className="border border-zinc-200 dark:border-zinc-800 rounded-lg"
-      emojisPerRow={12}
-      emojiSize={28}
-    >
-      <EmojiPicker.Header className="p-2 pb-0">
-        <EmojiPicker.Input
-          placeholder="Search emoji"
-          autoFocus={true}
-          className="focus:ring-2 focus:ring-inset ring-1 ring-transparent"
-        />
-      </EmojiPicker.Header>
-      <EmojiPicker.Group>
-        <EmojiPicker.List hideStickyHeader={true} containerHeight={200} />
-      </EmojiPicker.Group>
-    </EmojiPicker>
+    <div className="p-4 ">
+      <CustomSelect
+        options={options}
+        handleSelect={handleSelect}
+        value={value}
+      />
+    </div>
   );
 }

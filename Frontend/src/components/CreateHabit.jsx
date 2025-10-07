@@ -3,20 +3,21 @@ import { User, Users } from "lucide-react";
 import Input from "./UI/Input";
 import CustomSelect from "./UI/CustomSelect";
 import EmojiePicker from "./UI/EmojiePicker";
+import Icon from "./UI/Icon";
 
 const CreateHabit = ({
   loading,
   habitName,
   habitDescription,
   duration,
-  emoji,
+  aspect,
   onHabitNameChange,
   onDurationChange,
-  onEmojiSelect,
+  onAspectSelect,
   onHabitDescriptionChange,
 }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [selectedEmoji, setSelectedEmoji] = useState(emoji || "🚀");
+  const [showAspectPicker, setShowAspectPicker] = useState(false);
+  const [selectedAspect, setSelectedAspect] = useState(aspect || "Health");
 
   const durations = [
     { value: 7, label: "7 days", icon: "🗓️" },
@@ -29,13 +30,13 @@ const CreateHabit = ({
     onDurationChange(selectedDuration);
   };
 
-  const handleEmojiSelect = (emoji) => {
-    onEmojiSelect(emoji);
-    setSelectedEmoji(emoji);
-    setShowEmojiPicker(false);
+  const handleAspectSelect = (aspect) => {
+    onAspectSelect(aspect);
+    setSelectedAspect(aspect);
+    setShowAspectPicker(false);
   };
-  const handleShowEmojiPicker = () => {
-    setShowEmojiPicker(!showEmojiPicker);
+  const handleShowAspectPicker = () => {
+    setShowAspectPicker(!showAspectPicker);
   };
 
   return (
@@ -43,12 +44,17 @@ const CreateHabit = ({
       <div>
         <h3 className="text-lg font-semibold mb-2 ml-4">Habit Name</h3>
         <div className="relative">
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-orange-500 rounded flex items-center justify-center">
-            <button onClick={handleShowEmojiPicker}>{selectedEmoji}</button>
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 rounded flex items-center justify-center">
+            <button onClick={handleShowAspectPicker}>
+              {<Icon iconName={selectedAspect} size={4} />}
+            </button>
           </div>
           <div className="absolute right-0 top-full mt-2 z-50 bg-white shadow-lg rounded-lg">
-            {showEmojiPicker && (
-              <EmojiePicker handleEmojiSelect={handleEmojiSelect} />
+            {showAspectPicker && (
+              <EmojiePicker
+                handleSelect={handleAspectSelect}
+                value={selectedAspect}
+              />
             )}
           </div>
           <Input
