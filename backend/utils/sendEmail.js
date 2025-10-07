@@ -2,8 +2,16 @@ const nodeMailer = require("nodemailer");
 const path = require("path");
 const fs = require("fs");
 
-const sendEmail = async ({ to, subject, data }) => {
+const sendEmail = async ({ to, subject, data, template }) => {
   try {
+    if (
+      !process.env.EMAIL_SERVICE ||
+      !process.env.EMAIL_USERNAME ||
+      !process.env.EMAIL_PASSWORD
+    ) {
+      console.log("Email service, username, and password are required");
+      throw new Error("Email service, username, and password are required");
+    }
     const transporter = nodeMailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       auth: {
@@ -12,7 +20,7 @@ const sendEmail = async ({ to, subject, data }) => {
       },
     });
 
-    const templatePath = path.join(__dirname, "invite.html");
+    const templatePath = path.join(__dirname, `${template}.html`);
     if (!sendEmail._tmpl) {
       sendEmail._tmpl = fs.readFileSync(templatePath, "utf8");
     }
@@ -25,6 +33,7 @@ const sendEmail = async ({ to, subject, data }) => {
       duration: String(data.duration ?? ""),
       startDate: data.startDate ?? "",
       endDate: data.endDate ?? "",
+      resetPasswordLink: data.resetPasswordLink ?? "",
     };
     const htmlContent = sendEmail._tmpl.replace(
       /{{(\w+)}}/g,
@@ -32,7 +41,7 @@ const sendEmail = async ({ to, subject, data }) => {
     );
 
     const info = await transporter.sendMail({
-      from: `"Habit Tracker Team" <${process.env.EMAIL_USERNAME}>`,
+      from: `"StreakForce Team" <${process.env.EMAIL_USERNAME}>`,
       to,
       subject,
       html: htmlContent,

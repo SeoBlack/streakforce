@@ -124,6 +124,20 @@ export const AuthProvider = ({ children }) => {
     return { success: true, user };
   };
 
+  // Forgot password function
+  const forgotPassword = async (email) => {
+    const response = await apiCall(API_ENDPOINTS.FORGOT_PASSWORD, {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    return { success: true, message: response.message };
+  };
+
   // Logout function
   const logout = () => {
     localStorage.removeItem("token");
@@ -204,6 +218,7 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     apiCall,
     googleLogin,
+    forgotPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
