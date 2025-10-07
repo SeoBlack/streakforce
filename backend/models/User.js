@@ -1,28 +1,33 @@
-// mongoose schema for user
+// models/User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+// User profile schema (unchanged)
 const userProfileSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    trim: true,
-    default: "",
+  firstName: { type: String, trim: true, default: "" },
+  lastName: { type: String, trim: true, default: "" },
+  profilePicture: { type: String, default: "" },
+  bio: { type: String, default: "" },
+});
+
+// NEW: stats schema for XP, levels, and streaks
+const userStatsSchema = new mongoose.Schema({
+  xp: {
+    current: { type: Number, default: 0 },
+    total: { type: Number, default: 100 }, // XP needed for next level
   },
-  lastName: {
-    type: String,
-    trim: true,
-    default: "",
+  level: {
+    current: { type: Number, default: 1 },
+    title: { type: String, default: "Beginner" },
   },
-  profilePicture: {
-    type: String,
-    default: "",
-  },
-  bio: {
-    type: String,
-    default: "",
+  streak: {
+    current: { type: Number, default: 0 },
+    longest: { type: Number, default: 0 },
+    lastCheckIn: { type: Date },
   },
 });
 
+// Main User Schema
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -36,7 +41,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: false, //not required for google auth
+      required: false,
       minlength: 6,
       select: true,
     },
@@ -44,22 +49,20 @@ const userSchema = new mongoose.Schema(
       type: userProfileSchema,
       default: {},
     },
-    lastLogin: {
-      type: Date,
-    },
+    lastLogin: { type: Date },
     googleId: {
       type: String,
       index: true,
       unique: true,
       sparse: true,
     },
+    stats: { type: userStatsSchema, default: {} },
   },
   {
     timestamps: true,
     toJSON: {
       virtuals: true,
       transform: (_doc, ret) => {
-        //this will on each returned object
         delete ret.password;
         delete ret.googleId;
         delete ret.__v;
@@ -70,11 +73,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Virtual full name
 userSchema.virtual("fullName").get(function () {
   const parts = [this.firstName, this.lastName].filter(Boolean);
   return parts.join(" ");
 });
 
+// Hash password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
@@ -86,7 +91,7 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-//a function to check if entered password is correct
+// Password comparison
 userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
