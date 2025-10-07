@@ -6,6 +6,7 @@ import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "../../components/Header";
+import Chat from "../../components/Chat/Chat";
 const MainLayout = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ const MainLayout = () => {
       <footer className="mt-auto">
         <Footer />
       </footer>
+
+      {/* Floating Chat Assistant */}
+      <Chat />
     </div>
   );
 };
