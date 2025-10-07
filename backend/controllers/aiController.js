@@ -11,15 +11,24 @@ const ai = new GoogleGenAI({
 const executeAiQuery = async (req, res) => {
   try {
     const { query } = req.body;
+    const user = req.user; // Available from auth middleware
+
+    if (!query) {
+      return res.status(400).json({ message: "Query is required" });
+    }
 
     const result = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: query,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       message: "AI query executed successfully",
       result: result.text,
+      user: {
+        name: `${user.firstName} ${user.lastName}`,
+        id: user._id,
+      },
     });
   } catch (error) {
     console.error("AI query execution error:", error);
