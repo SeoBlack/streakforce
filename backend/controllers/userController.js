@@ -22,31 +22,70 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// PUT /users/:id
 const updateUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
 
-    // Check if user exists and is the same as the authenticated user
-    //TODO: replace the following logic with actual user profile update logic
-    // Remove fields that shouldn't be updated
-    delete updates.password;
-    delete updates.email;
-    delete updates.username;
-    delete updates._id;
-    delete updates.createdAt;
-    delete updates.updatedAt;
+    if (req.user._id.toString() !== id) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update this profile" });
+    }
 
-    const user = Users.find((user) => user.id === id);
-    Object.assign(user, updates);
+    const restrictedFields = [
+      "password",
+      "email",
+      "username",
+      "_id",
+      "createdAt",
+      "updatedAt",
+    ];
+    restrictedFields.forEach((field) => delete updates[field]);
+
+    // If fullName is provided, split into firstName + lastName
+    if (updates.fullName) {
+      const parts = updates.fullName.trim().split(" ");
+      const firstName = parts[0];
+      const lastName = parts.slice(1).join(" ");
+      updates.profile = {
+        ...(updates.profile || {}),
+        firstName,
+        lastName,
+      };
+      delete updates.fullName; // remove virtual field
+    }
+
+    const profileUpdates = updates.profile || {};
+    delete updates.profile;
+
+    const filteredUserUpdates = {};
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined && value !== null && value !== "") {
+        filteredUserUpdates[key] = value;
+      }
+    }
+
+    const filteredProfileUpdates = {};
+    for (const [key, value] of Object.entries(profileUpdates)) {
+      if (value !== undefined && value !== null && value !== "") {
+        filteredProfileUpdates[`profile.${key}`] = value;
+      }
+    }
+
+    const finalUpdates = { ...filteredUserUpdates, ...filteredProfileUpdates };
+
+    const user = await Users.findByIdAndUpdate(
+      id,
+      { $set: finalUpdates },
+      { new: true, runValidators: true }
+    ).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    Object.assign(user, updates);
 
-    res.json({
+    res.status(200).json({
       message: "User profile updated successfully",
       user,
     });
