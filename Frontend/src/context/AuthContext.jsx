@@ -194,6 +194,29 @@ export const AuthProvider = ({ children }) => {
     return { success: true, user: response.user };
   };
 
+  const getUserProgress = async (userId) => {
+    if (!userId) {
+      return { success: false, error: "User ID is required" };
+    }
+
+    const response = await apiCall(`/users/${userId}`, {
+      method: "GET",
+    }).catch((error) => {
+      return { success: false, error: error.message };
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user: response.user, token: state.token },
+    });
+
+    return { success: true, user: response.user };
+  };
+
   // Effect to verify token on app load
   useEffect(() => {
     verifyToken();
@@ -217,6 +240,7 @@ export const AuthProvider = ({ children }) => {
     apiCall,
     googleLogin,
     forgotPassword,
+    getUserProgress,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
