@@ -7,7 +7,7 @@ const getUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = Users.find((user) => user.id === id);
+    const user = await Users.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -88,9 +88,54 @@ const getUserAllHabits = async (req, res) => {
   }
 };
 
+const getUserProgress = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await Users.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Default values for new users
+    const xp = user.stats?.xp || { current: 0, total: 100 };
+    const level = user.stats?.level || {
+      current: 1,
+      title: "Beginner",
+    };
+    const streak = user.stats?.streak || {
+      current: 0,
+      longest: 0,
+    };
+
+    // XP to next level
+    const nextLevelXp = xp.total - xp.current;
+
+    res.status(200).json({
+      xpPoints: {
+        current: xp.current,
+        total: xp.total,
+        nextLevel: nextLevelXp,
+      },
+      level: {
+        current: level.current,
+        title: level.title,
+      },
+      streak: {
+        current: streak.current,
+        longest: streak.longest,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching user progress:", err);
+    res.status(500).json({ message: "Server error fetching progress" });
+  }
+};
+
 module.exports = {
   getUserProfile,
   updateUserProfile,
   getAllUsers,
   getUserAllHabits,
+  getUserProgress,
 };
