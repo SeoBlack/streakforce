@@ -4,6 +4,8 @@ const {
   login,
   verifyToken,
   googleAuth,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -19,5 +21,11 @@ router.get("/verify", verifyToken);
 
 // POST /auth/google-auth
 router.post("/google-auth", googleAuth);
+
+// POST /auth/forgot-password
+router.post("/forgot-password", forgotPassword);
+
+// POST /auth/reset-password?token=
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;

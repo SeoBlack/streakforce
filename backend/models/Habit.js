@@ -7,6 +7,10 @@ const habitSchema = new mongoose.Schema({
     ref: "Users",
     required: true,
   },
+  aspect: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -26,7 +30,7 @@ const habitSchema = new mongoose.Schema({
   },
   privacy: {
     type: String,
-    enum: ["team", "private"],
+    enum: ["team", "solo"],
     required: true,
   },
   streak: {

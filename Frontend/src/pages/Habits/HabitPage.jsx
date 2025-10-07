@@ -1,20 +1,41 @@
+import React, { useEffect } from "react";
 import UserCheckInList from "../../components/UserCheckinList";
-import TopPerformers from "../../components/TopPerformer";
-import { Flame, BookOpen, Settings, UserPlus } from "lucide-react";
-import Button from "../../components/Button";
+import { Flame, Settings } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useHabits } from "../../context/habitContextBase";
+import Icon from "../../components/UI/Icon";
+import Button from "../../components/UI/Button";
+import { useCheckins } from "../../context/checkinContextBase";
+import { toast } from "react-toastify";
 
-const teamData = {
-  streakDays: 12,
-  challenge: {
-    title: "Read 10 pages",
-    subtitle: "30-day challenge",
-    daysLeft: 18,
-    completed: 12,
-    total: 30,
-    progressPercentage: 40,
-  },
-};
-const TeamPage = () => {
+const HabitsPage = () => {
+  const { id } = useParams();
+  const { selectedHabit, getHabitById } = useHabits();
+  const { submitCheckIn, isLoading, hasCheckedInToday } = useCheckins();
+
+  const hasCheckedIn = hasCheckedInToday(selectedHabit?._id);
+  useEffect(() => {
+    if (id) {
+      getHabitById(id);
+    }
+  }, [id, getHabitById]);
+
+  const handleCheckIn = async () => {
+    try {
+      const checkinData = await submitCheckIn(selectedHabit?._id);
+      toast.success(checkinData?.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const streak = selectedHabit?.streak || 0;
+  const duration = selectedHabit?.duration || 0; // total planned days
+  const completed = Math.min(streak, duration || streak);
+  const progressPercentage = duration
+    ? Math.min(100, Math.round((completed / duration) * 100))
+    : 0;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile-first responsive container */}
@@ -23,9 +44,11 @@ const TeamPage = () => {
         <div className="bg-white px-4 pt-6 pb-4 border-b border-gray-100 sm:px-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Team Page</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {selectedHabit?.title || "Habit"}
+              </h1>
               <p className="text-gray-600 text-sm mt-1">
-                Track your team's progress
+                {selectedHabit?.description || "Track your habit's progress"}
               </p>
             </div>
             <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
@@ -47,12 +70,8 @@ const TeamPage = () => {
                 <Flame className="w-8 h-8 text-white" />
               </div>
 
-              <h2 className="text-3xl font-bold mb-2">
-                {teamData.streakDays} Days Strong!
-              </h2>
-              <p className="text-orange-100 text-lg font-medium">
-                Keep it up, team!
-              </p>
+              <h2 className="text-3xl font-bold mb-2">{streak} Days Strong!</h2>
+              <p className="text-orange-100 text-lg font-medium">Keep it up!</p>
             </div>
           </div>
 
@@ -61,21 +80,26 @@ const TeamPage = () => {
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
+                  <Icon
+                    iconName={selectedHabit?.aspect}
+                    size={6}
+                    rounded={false}
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {teamData.challenge.title}
+                    {selectedHabit?.title || "Habit Progress"}
                   </h3>
                   <p className="text-gray-600 text-sm">
-                    {teamData.challenge.subtitle}
+                    {selectedHabit?.description ||
+                      "Your ongoing habit challenge"}
                   </p>
                 </div>
               </div>
 
               <div className="text-right">
                 <div className="text-2xl font-bold text-orange-500">
-                  {teamData.challenge.daysLeft}
+                  {duration > 0 ? Math.max(0, duration - completed) : 0}
                 </div>
                 <div className="text-sm text-gray-500">days left</div>
               </div>
@@ -86,34 +110,39 @@ const TeamPage = () => {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600">Progress</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {teamData.challenge.completed} of {teamData.challenge.total}{" "}
-                  days completed
+                  {completed} of {duration || completed} days completed
                 </span>
               </div>
 
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${teamData.challenge.progressPercentage}%` }}
+                  style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
             </div>
+            {!hasCheckedIn && (
+              <Button
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-orange-400 to-color-1 hover:from-orange-500 hover:to-color-2 text-white font-semibold space-x-3"
+                onClick={() => handleCheckIn()}
+              >
+                Check In
+              </Button>
+            )}
+            {hasCheckedIn && (
+              <div className="w-full bg-green-100 rounded-lg h-12 flex items-center justify-center border-dashed border-green-500 border-2">
+                <h3 className="text-green-500 font-semibold ">Checked In</h3>
+              </div>
+            )}
           </div>
         </div>
         <div className="p-4 sm:p-6">
-          <UserCheckInList />
-        </div>
-        <div className="px-4  sm:px-6 mt-2 mb-4">
-          <Button className="py-5 gap-2 text-white bg-color-1 ">
-            <UserPlus className="w-6 h-6" /> Invite Teammates
-          </Button>
-        </div>
-        <div className="p-4 sm:p-6">
-          <TopPerformers />
+          <UserCheckInList habit={selectedHabit} />
         </div>
       </div>
     </div>
   );
 };
 
-export default TeamPage;
+export default HabitsPage;

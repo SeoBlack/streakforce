@@ -1,7 +1,7 @@
 import React from "react";
 import HabitItem from "./HabitItem";
 
-const HabitsSection = ({ title, habit }) => {
+const HabitsSection = ({ title, habit, fullInfo }) => {
   return (
     <div className="px-4 sm:px-6">
       <div className="flex justify-between items-center mb-4">
@@ -12,7 +12,7 @@ const HabitsSection = ({ title, habit }) => {
       </div>
       <div className="space-y-3">
         {habit.map((habit, index) => (
-          <HabitItem key={index} {...habit} />
+          <HabitItem key={index} habit={habit} fullInfo={fullInfo} />
         ))}
       </div>
     </div>

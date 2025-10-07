@@ -48,8 +48,9 @@ const UserCheckInItem = ({ user }) => {
   );
 };
 
-const UserCheckInList = () => {
+const UserCheckInList = ({ habit }) => {
   const totalCheckedIn = usersData.filter((u) => u.checkedIn).length;
+  //handle checkin when cheking in implemented
 
   return (
     <div className=" mt-4 bg-white rounded-2xl shadow-xl border border-gray-300 overflow-hidden">

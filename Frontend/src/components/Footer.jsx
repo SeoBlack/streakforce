@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Home, Users, Plus, TrendingUp, User } from "lucide-react";
+import {
+  Home,
+  Users,
+  Plus,
+  TrendingUp,
+  User,
+  Leaf,
+  Sprout,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Footer = () => {
@@ -10,7 +18,7 @@ const Footer = () => {
 
   const navItems = [
     { icon: Home, label: "Home", to: "/home" },
-    { icon: Users, label: "Teams", to: "/team" },
+    { icon: Sprout, label: "Habits", to: "/habits" },
     { icon: Plus, label: "Add", to: "/create-challenge" },
     
     { icon: User, label: "Profile", to: "/profile" },

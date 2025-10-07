@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../node_modules/@ferrucc-io/emoji-picker";
 
 @custom-variant dark (&:where([date-theme=dark], [data-theme=dark] *));
 
@@ -26,9 +27,7 @@
 }
 
 @theme {
-  --color-color-1: #FF6B6B; 
-  --color-color-2: #F59E0B; 
-  --color-color-3: #10B981; 
+  --color-color-1: #ff6b6b;
+  --color-color-2: #f59e0b;
+  --color-color-3: #10b981;
 }
-
-

@@ -1,55 +1,66 @@
 import { ArrowLeft, Link as LinkIcon, Trophy } from "lucide-react";
 import { useState } from "react";
 import CreateHabit from "../../components/CreateHabit";
-import EmailInput from "../../components/EmailInput";
-import Button from "../../components/Button";
-import { useAuth } from "../../context/useAuth";
+import Button from "../../components/UI/Button";
 import { useNavigate } from "react-router-dom";
+import InviteFriends from "../../components/InviteFriends";
+import { toast } from "react-toastify";
+import { useHabits } from "../../context/habitContextBase";
 
 const CreateChallenge = () => {
   const [habitName, setHabitName] = useState("");
+  const [habitDescription, setHabitDescription] = useState("");
   const [duration, setDuration] = useState(30);
   const [privacy, setPrivacy] = useState("team");
   const [emails, setEmails] = useState([]);
-  const { user, apiCall } = useAuth();
+  const [aspect, setAspect] = useState("health");
+  const { createHabit } = useHabits();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    //go back to previous page
+    navigate(-1);
+  };
 
   const handleSubmit = async () => {
     if (!habitName || !duration || !privacy) {
-      alert("Please fill in all the required fields.");
+      toast.error("Please fill in all the required fields.");
       return;
     }
-    if (!user?._id) {
-      alert("User not found");
-      return;
-    }
+
     const habitData = {
       title: habitName,
       duration: duration,
       privacy: privacy,
-      description: habitName,
+      description: habitDescription,
       members: emails,
+      aspect: aspect,
     };
-    console.log("habitData", habitData);
-    console.log("user._id", user._id);
     try {
-      const response = await apiCall(`/habits/${user._id}`, {
-        method: "POST",
-        body: JSON.stringify(habitData),
-      });
-      console.log("Habit created:", response);
-      alert("Habit created successfully!");
-      navigate("/team");
+      setLoading(true);
+      const response = await createHabit(habitData);
+      if (response.success) {
+        toast.success("Habit created successfully!");
+        navigate("/habits");
+      } else {
+        toast.error(response.error || "Failed to create habit.");
+      }
     } catch (error) {
-      console.error("Error creating habit:", error);
-      alert(error.message || "Failed to create habit.");
+      toast.error(error.message || "Failed to create habit.");
+    } finally {
+      setLoading(false);
     }
+  };
+  const handleChangeEmails = (emails) => {
+    setEmails(emails);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="max-w-5xl mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
+      <header className=" mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
         <button
+          onClick={handleGoBack}
           aria-label="Go back"
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
@@ -67,41 +78,35 @@ const CreateChallenge = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-3xl shadow-lg p-6">
             <CreateHabit
+              loading={loading}
               habitName={habitName}
+              habitDescription={habitDescription}
               duration={duration}
               privacy={privacy}
+              aspect={aspect}
               onHabitNameChange={setHabitName}
+              onHabitDescriptionChange={setHabitDescription}
               onDurationChange={setDuration}
               onPrivacyChange={setPrivacy}
+              onAspectSelect={setAspect}
             />
           </div>
-          <div className="bg-white rounded-3xl shadow-lg p-6 flex flex-col">
-            <h3 className="text-gray-900 font-medium mb-4">Invite Teammates</h3>
 
-            <div className="mb-4">
-              <Button
-                aria-label="Generate invite code"
-                className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-orange-300 rounded-lg text-orange-600 hover:border-orange-400 hover:bg-orange-50 transition-all font-medium"
-              >
-                <LinkIcon className="w-4 h-4" />
-                Generate Invite Code
-              </Button>
-            </div>
-
-            <p className="text-center text-gray-500 text-sm mb-4">
-              Or enter emails manually
-            </p>
-
-            <EmailInput emails={emails} onEmailsChange={setEmails} />
-          </div>
+          <InviteFriends
+            emails={emails}
+            onEmailsChange={handleChangeEmails}
+            privacy={privacy}
+            onPrivacyChange={setPrivacy}
+          />
         </div>
         <div className="mt-8 flex justify-center">
           <Button
             onClick={handleSubmit}
             className="bg-color-1 text-white py-5 px-8 rounded-lg font-medium hover:bg-color-2 flex items-center gap-2"
+            disabled={loading}
           >
             <Trophy className="w-5 h-5" />
-            Create Challenge
+            Create Habit
           </Button>
         </div>
       </main>

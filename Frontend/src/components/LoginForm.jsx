@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import Button from "./Button";
+import Button from "./UI/Button";
 import SocialLogin from "./SocialLogin";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
