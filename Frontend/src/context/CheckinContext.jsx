@@ -4,8 +4,7 @@ import { API_ENDPOINTS } from "../utils/api";
 import { useAuth } from "./useAuth";
 
 const CheckinProvider = ({ children }) => {
-  const { apiCall } = useAuth();
-
+  const { apiCall, user } = useAuth();
   const [checkins, setCheckins] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -54,7 +53,14 @@ const CheckinProvider = ({ children }) => {
   const getCheckinsForHabit = useCallback(
     (habitId) => {
       if (!habitId) return [];
-      return checkins.filter((checkin) => checkin.habitId === habitId);
+      //today checkins
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return checkins.filter(
+        (checkin) =>
+          checkin.habitId === habitId &&
+          checkin.checkInDate >= today.toISOString()
+      );
     },
     [checkins]
   );
@@ -88,14 +94,18 @@ const CheckinProvider = ({ children }) => {
    * @returns {boolean} - True if user has checked in today
    */
   const hasCheckedInToday = useCallback(
-    (habitId) => {
+    (habitId, userId = null) => {
       if (!habitId) return false;
+
+      if (!userId) {
+        userId = user?._id;
+      }
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
       const habitCheckins = checkins.filter(
-        (checkin) => checkin.habitId === habitId
+        (checkin) => checkin.habitId === habitId && checkin.userId === userId
       );
 
       return habitCheckins.some((checkin) => {
@@ -128,7 +138,8 @@ const CheckinProvider = ({ children }) => {
 
   useEffect(() => {
     getAllCheckins();
-  }, [getAllCheckins]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   return (
     <CheckinContext.Provider value={value}>{children}</CheckinContext.Provider>

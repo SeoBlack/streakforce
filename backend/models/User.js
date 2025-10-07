@@ -21,6 +21,18 @@ const userProfileSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  avatarConfig: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
+  xpPoints: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
+  streak: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {},
+  },
 });
 
 const userSchema = new mongoose.Schema(

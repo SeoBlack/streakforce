@@ -2,7 +2,9 @@ import { Star, Flame } from "lucide-react";
 
 const ProgressComponent = ({ userData }) => {
   const progressPercentage =
-    (userData.xpPoints.current / userData.xpPoints.total) * 100;
+    (userData?.profile?.xpPoints?.current /
+      userData?.profile?.xpPoints?.total) *
+    100;
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -13,8 +15,8 @@ const ProgressComponent = ({ userData }) => {
         <div className="flex justify-between items-center mb-2">
           <span className="text-gray-600 font-medium">XP Points</span>
           <span className="text-gray-900 font-semibold">
-            {userData.xpPoints.current.toLocaleString()} /{" "}
-            {userData.xpPoints.total.toLocaleString()}
+            {userData?.profile?.xpPoints?.current?.toLocaleString()} /{" "}
+            {userData?.profile?.xpPoints?.total?.toLocaleString()}
           </span>
         </div>
 
@@ -26,7 +28,8 @@ const ProgressComponent = ({ userData }) => {
         </div>
 
         <p className="text-gray-500 text-sm">
-          {userData.xpPoints.nextLevel.toLocaleString()} XP to next level
+          {userData?.profile?.xpPoints?.nextLevel?.toLocaleString()} XP to next
+          level
         </p>
       </div>
       <div className="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl p-4 text-white text-center mb-4">
@@ -37,22 +40,24 @@ const ProgressComponent = ({ userData }) => {
             stroke="currentColor"
           />
           <span className="text-lg font-semibold">
-            Level {userData.level.current}
+            Level {userData?.profile?.level?.current}
           </span>
         </div>
-        <p className="text-emerald-50 font-medium">{userData.level.title}</p>
+        <p className="text-emerald-50 font-medium">
+          {userData?.profile?.level?.title}
+        </p>
       </div>
 
       <div className="bg-gradient-to-r from-orange-200 to-pink-200 rounded-xl p-4">
         <div className="flex items-center justify-center mb-2">
           <Flame className="w-6 h-6 text-orange-500 mr-2" />
           <span className="text-2xl font-bold text-gray-900">
-            {userData.streak.current}
+            {userData?.profile?.streak?.current}
           </span>
         </div>
         <p className="text-gray-700 font-medium text-center mb-1">Day Streak</p>
         <p className="text-gray-500 text-sm text-center">
-          Longest: {userData.streak.longest} days
+          Longest: {userData?.profile?.streak?.longest} days
         </p>
       </div>
     </div>

@@ -10,6 +10,8 @@ export const API_ENDPOINTS = {
   GOOGLE_AUTH: "/auth/google-auth",
   FORGOT_PASSWORD: "/auth/forgot-password",
   RESET_PASSWORD: "/auth/reset-password",
+  GET_USER_PROFILE_BY_ID: "/users/",
+  UPDATE_PROFILE: "/users/profile",
 };
 
 export const API_BASE_URL = import.meta.env.VITE_BACKEND_ENDPOINT;

@@ -14,11 +14,14 @@ const HabitsPage = () => {
   const { submitCheckIn, isLoading, hasCheckedInToday } = useCheckins();
 
   const hasCheckedIn = hasCheckedInToday(selectedHabit?._id);
+  console.log("hasCheckedIn", hasCheckedIn);
   useEffect(() => {
     if (id) {
       getHabitById(id);
     }
-  }, [id, getHabitById]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // Only re-fetch when the id changes
+  console.log(selectedHabit);
 
   const handleCheckIn = async () => {
     try {
@@ -28,6 +31,7 @@ const HabitsPage = () => {
       toast.error(error.message);
     }
   };
+  if (!selectedHabit) return <div>Loading...</div>;
 
   const streak = selectedHabit?.streak || 0;
   const duration = selectedHabit?.duration || 0; // total planned days

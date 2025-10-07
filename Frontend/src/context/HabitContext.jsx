@@ -111,7 +111,8 @@ const HabitProvider = ({ children }) => {
       setHabits([]);
       setSelectedHabit(null);
     }
-  }, [isAuthenticated, getAllHabits]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]); // Only re-fetch when authentication status changes
 
   const value = {
     habits,

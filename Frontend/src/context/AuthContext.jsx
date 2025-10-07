@@ -1,4 +1,9 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, {
+  createContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from "react";
 import { AUTH_ACTIONS, initialState, authReducer } from "./authConstants";
 import { API_BASE_URL, API_ENDPOINTS } from "../utils/api";
 
@@ -10,26 +15,29 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   // Helper function to make authenticated API calls
-  const apiCall = async (url, options = {}) => {
-    const token = state.token;
+  const apiCall = useCallback(
+    async (url, options = {}) => {
+      const token = state.token;
 
-    const config = {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-    };
-    const response = await fetch(`${API_BASE_URL}${url}`, config);
+      const config = {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...options.headers,
+        },
+      };
+      const response = await fetch(`${API_BASE_URL}${url}`, config);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Request failed");
-    }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Request failed");
+      }
 
-    return await response.json();
-  };
+      return await response.json();
+    },
+    [state.token]
+  );
   const googleLogin = async (credential) => {
     try {
       dispatch({ type: AUTH_ACTIONS.LOGIN_START });
@@ -148,7 +156,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Verify token and get user data
-  const verifyToken = async () => {
+  const verifyToken = useCallback(async () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -171,11 +179,11 @@ export const AuthProvider = ({ children }) => {
       type: AUTH_ACTIONS.LOGIN_SUCCESS,
       payload: { user, token },
     });
-  };
+  }, [apiCall]);
 
   // Update user profile
   const updateProfile = async (userData) => {
-    const response = await apiCall("/users/profile", {
+    const response = await apiCall(API_ENDPOINTS.UPDATE_PROFILE, {
       method: "PUT",
       body: JSON.stringify(userData),
     }).catch((error) => {
@@ -194,10 +202,29 @@ export const AuthProvider = ({ children }) => {
     return { success: true, user: response.user };
   };
 
+  const getProfileByUserId = useCallback(
+    async (userId) => {
+      const response = await apiCall(
+        `${API_ENDPOINTS.GET_USER_PROFILE_BY_ID}${userId}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (response.success === false) {
+        return response;
+      }
+      console.log("response.user", response.user);
+      return response.user;
+    },
+    [apiCall]
+  );
+
   // Effect to verify token on app load
   useEffect(() => {
     verifyToken();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   // Context value
   const value = {
@@ -217,6 +244,7 @@ export const AuthProvider = ({ children }) => {
     apiCall,
     googleLogin,
     forgotPassword,
+    getProfileByUserId,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
