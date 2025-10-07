@@ -1,6 +1,5 @@
 // mongoose schema for check-in
 const mongoose = require("mongoose");
-const Habit = require("./Habit");
 
 const checkInSchema = new mongoose.Schema({
   habitId: {
@@ -14,7 +13,7 @@ const checkInSchema = new mongoose.Schema({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Users",
     required: true,
   },
 });
