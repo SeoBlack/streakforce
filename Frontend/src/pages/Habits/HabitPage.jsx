@@ -3,6 +3,7 @@ import UserCheckInList from "../../components/UserCheckinList";
 import { Flame, BookOpen, Settings } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useHabits } from "../../context/habitContextBase";
+import Icon from "../../components/UI/Icon";
 
 const HabitsPage = () => {
   const { id } = useParams();
@@ -64,7 +65,11 @@ const HabitsPage = () => {
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
+                  <Icon
+                    iconName={selectedHabit?.aspect}
+                    size={6}
+                    rounded={false}
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">

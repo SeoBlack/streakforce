@@ -2,6 +2,7 @@ import React from "react";
 import { Flame, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useHabits } from "../context/habitContextBase";
+import Icon from "./UI/Icon";
 
 const HabitItem = ({ habit, fullInfo = false }) => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const HabitItem = ({ habit, fullInfo = false }) => {
         <div
           className={`w-18 h-18 ${habit.iconBg} rounded-xl flex items-center justify-center`}
         >
-          {habit.icon}
+          <Icon iconName={habit.aspect} size={8} />
         </div>
         <div>
           <h3 className="font-semibold text-gray-900 text-lg sm:text-base">

@@ -13,7 +13,7 @@ const CreateChallenge = () => {
   const [duration, setDuration] = useState(30);
   const [privacy, setPrivacy] = useState("team");
   const [emails, setEmails] = useState([]);
-  const [emoji, setEmoji] = useState("");
+  const [aspect, setAspect] = useState("health");
   const { createHabit } = useHabits();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -30,9 +30,10 @@ const CreateChallenge = () => {
       privacy: privacy,
       description: habitDescription,
       members: emails,
-      icon: emoji,
+      aspect: aspect,
     };
     try {
+      console.log(habitData);
       setLoading(true);
       const response = await createHabit(habitData);
       if (response.success) {
@@ -77,12 +78,12 @@ const CreateChallenge = () => {
               habitDescription={habitDescription}
               duration={duration}
               privacy={privacy}
-              emoji={emoji}
+              aspect={aspect}
               onHabitNameChange={setHabitName}
               onHabitDescriptionChange={setHabitDescription}
               onDurationChange={setDuration}
               onPrivacyChange={setPrivacy}
-              onEmojiSelect={setEmoji}
+              onAspectSelect={setAspect}
             />
           </div>
 
