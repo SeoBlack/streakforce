@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
         ...options.headers,
       },
     };
-    console.log(API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}${url}`, config);
 
     if (!response.ok) {
@@ -41,7 +40,6 @@ export const AuthProvider = ({ children }) => {
           clientId: credential.clientId,
         }),
       });
-      console.log(response);
       if (response.success === false) {
         return response;
       }

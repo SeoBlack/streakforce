@@ -1,6 +1,7 @@
 import React from "react";
 import { FaPen, FaCog } from "react-icons/fa";
 
+
 const ProfileEditPage = () => {
   const [nameEditing, setNameEditing] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -22,7 +23,6 @@ const ProfileEditPage = () => {
       setFormData((p) => ({ ...p, [k]: e.target.value }));
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log("SAVE", formData);
   };
 
   return (

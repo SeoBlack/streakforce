@@ -18,6 +18,11 @@ const CreateChallenge = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleGoBack = () => {
+    //go back to previous page
+    navigate(-1);
+  };
+
   const handleSubmit = async () => {
     if (!habitName || !duration || !privacy) {
       toast.error("Please fill in all the required fields.");
@@ -33,7 +38,6 @@ const CreateChallenge = () => {
       aspect: aspect,
     };
     try {
-      console.log(habitData);
       setLoading(true);
       const response = await createHabit(habitData);
       if (response.success) {
@@ -54,8 +58,9 @@ const CreateChallenge = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="max-w-5xl mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
+      <header className=" mx-auto w-full bg-white shadow-sm p-4 flex items-center gap-3">
         <button
+          onClick={handleGoBack}
           aria-label="Go back"
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
         >

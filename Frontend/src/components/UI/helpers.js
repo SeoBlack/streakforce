@@ -16,3 +16,9 @@ export const getBgColorByName = (iconName) => {
       return "bg-green-100";
   }
 };
+
+export const isToday = (date) => {
+  const today = new Date();
+  const checkinDate = new Date(date);
+  return today.toDateString().split(" ")[0] === checkinDate.split(" ")[0];
+};
