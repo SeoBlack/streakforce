@@ -1,7 +1,6 @@
 import React from "react";
 import { FaPen, FaCog } from "react-icons/fa";
 
-
 const ProfileEditPage = () => {
   const [nameEditing, setNameEditing] = React.useState(false);
   const [formData, setFormData] = React.useState({
@@ -10,18 +9,16 @@ const ProfileEditPage = () => {
     phone: "",
     password: "",
   });
-  const fileRef = React.useRef<HTMLInputElement | null>(null);
+  const fileRef = React.useRef(null);
 
   const handlePickAvatar = () => fileRef.current?.click();
-  const handleAvatarFile: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleAvatarFile = (e) => {
     const f = e.target.files?.[0];
     if (f) console.log("Picked avatar:", f.name);
   };
-  const handleChange =
-    (k: keyof typeof formData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      setFormData((p) => ({ ...p, [k]: e.target.value }));
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleChange = (k) => (e) =>
+    setFormData((p) => ({ ...p, [k]: e.target.value }));
+  const handleSubmit = (e) => {
     e.preventDefault();
   };
 
@@ -100,10 +97,12 @@ const ProfileEditPage = () => {
                 <input
                   type={f.key === "password" ? "password" : "text"}
                   placeholder={f.ph}
-                  value={(formData as any)[f.key]}
-                  onChange={handleChange(f.key as keyof typeof formData)}
+                  value={formData[f.key]}
+                  onChange={handleChange(f.key)}
                   className={`w-full bg-transparent outline-none text-[14px] text-slate-700 placeholder-slate-400 ${
-                    f.dotted ? "underline decoration-dotted underline-offset-4" : ""
+                    f.dotted
+                      ? "underline decoration-dotted underline-offset-4"
+                      : ""
                   }`}
                 />
               </div>
