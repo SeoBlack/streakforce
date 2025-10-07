@@ -1,8 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "../../context/useAuth";
 import { useContext } from "react";
-import HabitContext from "../context/habitContextBase";
-import { API_ENDPOINTS } from "../utils/api";
+import HabitContext from "../../context/habitContextBase";
+import { API_ENDPOINTS } from "../../utils/api";
+import ChatToggleButton from "./ChatToggleButton";
+import ChatHeader from "./ChatHeader";
+import ChatMessage from "./ChatMessage";
+import TypingIndicator from "./TypingIndicator";
+import ChatInput from "./ChatInput";
 import "./Chat.css";
 
 const Chat = () => {
@@ -99,7 +104,7 @@ Remember: You're a coach, not just an information provider. Be personal, be supp
     try {
       const contextPrompt = buildContextPrompt();
       const conversationHistory = messages
-        .slice(-5) // Last 5 messages for context
+        .slice(-5)
         .map(
           (msg) =>
             `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
@@ -167,144 +172,27 @@ Respond as the habit coach:`;
 
   return (
     <>
-      {/* Floating Chat Button */}
-      <button
-        className={`chat-toggle-btn ${isOpen ? "chat-open" : ""}`}
-        onClick={toggleChat}
-        aria-label="Toggle chat"
-      >
-        {isOpen ? (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        ) : (
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-        )}
-      </button>
+      <ChatToggleButton isOpen={isOpen} onClick={toggleChat} />
 
-      {/* Chat Window */}
       <div className={`chat-window ${isOpen ? "chat-window-open" : ""}`}>
-        {/* Chat Header */}
-        <div className="chat-header">
-          <div className="chat-header-info">
-            <div className="chat-avatar">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-              </svg>
-            </div>
-            <div className="chat-header-text">
-              <h3>Habit Coach</h3>
-              <span className="chat-status">
-                <span className="status-indicator"></span>
-                Online
-              </span>
-            </div>
-          </div>
-          <button
-            className="chat-clear-btn"
-            onClick={clearChat}
-            title="Clear chat"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <polyline points="1 4 1 10 7 10"></polyline>
-              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-            </svg>
-          </button>
-        </div>
+        <ChatHeader onClear={clearChat} />
 
-        {/* Chat Messages */}
         <div className="chat-messages">
           {messages.map((msg, index) => (
-            <div key={index} className={`chat-message ${msg.role}`}>
-              <div className="message-content">
-                <p>{msg.content}</p>
-                <span className="message-time">
-                  {msg.timestamp.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-            </div>
+            <ChatMessage key={index} message={msg} />
           ))}
-          {isLoading && (
-            <div className="chat-message assistant">
-              <div className="message-content typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
+          {isLoading && <TypingIndicator />}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Chat Input */}
-        <div className="chat-input-container">
-          <textarea
-            ref={inputRef}
-            className="chat-input"
-            placeholder="Ask me anything about building habits..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            rows="1"
-            disabled={isLoading}
-          />
-          <button
-            className="chat-send-btn"
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            aria-label="Send message"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
+        <ChatInput
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onSend={handleSend}
+          onKeyPress={handleKeyPress}
+          disabled={isLoading}
+          inputRef={inputRef}
+        />
       </div>
     </>
   );
