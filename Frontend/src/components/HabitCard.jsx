@@ -53,14 +53,17 @@ const HabitCard = ({ habit, teamMembers }) => {
               </span>
             </div>
           </div>
+          <p className="text-gray-600 text-base sm:text-lg mb-6">
+            {habit?.description}
+          </p>
 
           <p className="text-gray-600 text-base sm:text-lg mb-6">
             Team Progress Today
           </p>
 
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex gap-4 items-center mb-8">
             {teamMembers.map((member, index) => (
-              <TeamMember key={index} {...member} />
+              <TeamMember key={index} memberId={member} habit={habit} />
             ))}
           </div>
         </div>

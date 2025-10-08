@@ -20,7 +20,7 @@ const Footer = () => {
     { icon: Home, label: "Home", to: "/home" },
     { icon: Sprout, label: "Habits", to: "/habits" },
     { icon: Plus, label: "Add", to: "/create-challenge" },
-    { icon: TrendingUp, label: "Stats", to: "/stats" },
+    // { icon: TrendingUp, label: "Stats", to: "/stats" },
     { icon: User, label: "Profile", to: "/profile" },
   ];
 
