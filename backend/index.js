@@ -9,7 +9,7 @@ const cron = require("node-cron");
 
 dotenv.config();
 
-// Connect to DB
+// Connect to DB (skipped in tests via jest.mock)
 connectDB();
 
 const app = express();
@@ -51,8 +51,12 @@ cron.schedule("0 0 * * *", function () {
   updateStreak();
 });
 
-// Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Only start server if run directly (not during tests)
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
