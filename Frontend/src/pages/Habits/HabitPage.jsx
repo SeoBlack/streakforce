@@ -1,20 +1,26 @@
 import React, { useEffect } from "react";
 import UserCheckInList from "../../components/UserCheckinList";
-import { Flame, Settings } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Flame, Settings, Trash } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useHabits } from "../../context/habitContextBase";
 import Icon from "../../components/UI/Icon";
 import Button from "../../components/UI/Button";
 import { useCheckins } from "../../context/checkinContextBase";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/useAuth";
 
 const HabitsPage = () => {
   const { id } = useParams();
-  const { selectedHabit, getHabitById } = useHabits();
+  const { user } = useAuth();
+  const { selectedHabit, getHabitById, deleteHabit } = useHabits();
   const { submitCheckIn, isLoading, hasCheckedInToday } = useCheckins();
-
+  const navigate = useNavigate();
   const hasCheckedIn = hasCheckedInToday(selectedHabit?._id);
   console.log("hasCheckedIn", hasCheckedIn);
+
+  console.log("user", user);
+  console.log("selectedHabit", selectedHabit);
+  const isHabitOwner = selectedHabit?.createdBy.id === user?._id;
   useEffect(() => {
     if (id) {
       getHabitById(id);
@@ -27,6 +33,16 @@ const HabitsPage = () => {
     try {
       const checkinData = await submitCheckIn(selectedHabit?._id);
       toast.success(checkinData?.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const onDeleteHabit = async () => {
+    try {
+      const deletedHabit = await deleteHabit(selectedHabit?._id);
+      toast.success(deletedHabit?.message);
+      navigate("/habits");
     } catch (error) {
       toast.error(error.message);
     }
@@ -55,9 +71,14 @@ const HabitsPage = () => {
                 {selectedHabit?.description || "Track your habit's progress"}
               </p>
             </div>
-            <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-              <Settings className="w-5 h-5 text-gray-600" />
-            </button>
+            {isHabitOwner && (
+              <button
+                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 cursor-pointer transition-colors"
+                onClick={onDeleteHabit}
+              >
+                <Trash className="w-5 h-5 text-red-400 hover:text-red-600" />
+              </button>
+            )}
           </div>
         </div>
 

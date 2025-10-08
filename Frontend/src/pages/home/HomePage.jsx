@@ -13,6 +13,7 @@ const HomePage = () => {
   const unCheckedInHabits = habits.filter(
     (habit) => !hasCheckedInToday(habit?._id)
   );
+
   console.log("unCheckedInHabits", unCheckedInHabits);
 
   return (

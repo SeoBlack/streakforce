@@ -82,6 +82,7 @@ const createHabit = async (req, res) => {
               startDate: startDate.toDateString(),
               endDate: endDate.toDateString(),
             },
+            template: "invite",
           }).catch((err) =>
             console.error(`Error sending email to ${member.email}:`, err)
           );

@@ -12,6 +12,7 @@ const getLevelTitle = (level) => {
 // POST /checkins
 const submitCheckIn = async (req, res) => {
   try {
+    console.log("submitCheckIn", req.body);
     //date is automatically added by the server
     const { habitId } = req.body;
     const userId = req.user.id;
@@ -47,11 +48,15 @@ const submitCheckIn = async (req, res) => {
       checkInDate: new Date(),
     });
 
+    console.log("newCheckIn", newCheckIn);
+
     // Fetch user
     const user = await Users.findById(userId);
     if (!user) {
+      console.log("user not found");
       return res.status(404).json({ message: "User not found" });
     }
+    console.log("user", user);
 
     // Initialize stats if not present
     if (!user.stats) {
@@ -81,7 +86,7 @@ const submitCheckIn = async (req, res) => {
       : null;
 
     const oneDay = 24 * 60 * 60 * 1000;
-    if (lastCheck && today - lastCheck <= oneDay * 1.5) {
+    if (lastCheck && today - lastCheck < oneDay * 1.5) {
       // within 36 hours → continue streak
       user.stats.streak.current += 1;
     } else {
@@ -107,6 +112,7 @@ const submitCheckIn = async (req, res) => {
           longest: user.stats.streak.longest,
         },
       },
+      checkIn: newCheckIn,
     });
   } catch (error) {
     console.error("Submit check-in error:", error);
