@@ -1,7 +1,11 @@
 import React from "react";
 import { User } from "lucide-react";
+import { useAuth } from "../context/useAuth";
+import UserAvatar from "./UserAvatar";
 
 export default function Header() {
+  const { user } = useAuth();
+  console.log("user", user);
   return (
     <div className="bg-white px-4 sm:px-6 py-4 sm:py-6">
       <div className="flex justify-between items-center">
@@ -14,9 +18,12 @@ export default function Header() {
             Ready to keep your streak alive?
           </p>
         </div>
-        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
-          <User className="w-6 h-6 text-gray-600" />
-        </div>
+        <UserAvatar
+          avatarConfig={user?.profile?.avatarConfig}
+          profilePicture={user?.profile?.profilePicture}
+          size="xxs"
+          showRing={false}
+        />
       </div>
     </div>
   );

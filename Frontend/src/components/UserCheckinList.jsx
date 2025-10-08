@@ -100,7 +100,11 @@ const UserCheckInList = ({ habit }) => {
           <div className="p-8 text-center text-gray-500">No members found</div>
         ) : (
           members.map((member) => (
-            <UserCheckInItem key={member._id} profile={member} habit={habit} />
+            <UserCheckInItem
+              key={member._id}
+              profile={member?.profile}
+              habit={habit}
+            />
           ))
         )}
       </div>
