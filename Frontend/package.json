@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "build:view": "rm -rf view && cd ../frontend && npm run build && cp -r dist ../backend/view",
+    "push": "git add . && git commit -m \"Update frontend build\" && git push",
+    "deploy": "npm run build:view && npm run push"
   },
   "dependencies": {
     "@ferrucc-io/emoji-picker": "^0.0.45",
