@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/User");
+const Habit = require("../models/Habit");
 
 // GET /users/:id
 const getUserProfileById = async (req, res) => {
@@ -89,7 +90,7 @@ const updateMyProfile = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find().select("-password");
+    const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
     console.error("Get user profile error:", error);
