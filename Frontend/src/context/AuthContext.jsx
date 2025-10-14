@@ -1,0 +1,255 @@
+import React, {
+  createContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from "react";
+import { AUTH_ACTIONS, initialState, authReducer } from "./authConstants";
+import { API_BASE_URL, API_ENDPOINTS } from "../utils/api";
+
+// Create Auth Context
+const AuthContext = createContext();
+
+// Auth Provider Component
+export const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // Helper function to make authenticated API calls
+  const apiCall = useCallback(
+    async (url, options = {}) => {
+      const token = state.token;
+
+      const config = {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...options.headers,
+        },
+      };
+      const response = await fetch(`${API_BASE_URL}${url}`, config);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Request failed");
+      }
+
+      return await response.json();
+    },
+    [state.token]
+  );
+  const googleLogin = async (credential) => {
+    try {
+      dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+      const response = await apiCall(API_ENDPOINTS.GOOGLE_AUTH, {
+        method: "POST",
+        body: JSON.stringify({
+          credential: credential.credential,
+          clientId: credential.clientId,
+        }),
+      });
+      if (response.success === false) {
+        return response;
+      }
+      const { token, user } = response;
+      localStorage.setItem("token", token);
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: { user, token } });
+      return { success: true, user };
+    } catch (error) {
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_FAILURE,
+        payload: error.message,
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Login function
+  const login = async (email, password) => {
+    dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+
+    const response = await apiCall(API_ENDPOINTS.LOGIN, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }).catch((error) => {
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_FAILURE,
+        payload: error.message,
+      });
+
+      return { success: false, error: error.message };
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    const { token, user } = response;
+
+    // Store token in localStorage
+    localStorage.setItem("token", token);
+
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user, token },
+    });
+
+    return { success: true, user };
+  };
+
+  // Register function
+  const register = async (email, password, firstName, lastName) => {
+    dispatch({ type: AUTH_ACTIONS.REGISTER_START });
+
+    const response = await apiCall(API_ENDPOINTS.REGISTER, {
+      method: "POST",
+      body: JSON.stringify({ email, password, firstName, lastName }),
+    }).catch((error) => {
+      dispatch({
+        type: AUTH_ACTIONS.REGISTER_FAILURE,
+        payload: error.message,
+      });
+
+      return { success: false, error: error.message };
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    const { token, user } = response;
+
+    // Store token in localStorage
+    localStorage.setItem("token", token);
+
+    dispatch({
+      type: AUTH_ACTIONS.REGISTER_SUCCESS,
+      payload: { user, token },
+    });
+
+    return { success: true, user };
+  };
+
+  // Forgot password function
+  const forgotPassword = async (email) => {
+    const response = await apiCall(API_ENDPOINTS.FORGOT_PASSWORD, {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    return { success: true, message: response.message };
+  };
+
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem("token");
+    dispatch({ type: AUTH_ACTIONS.LOGOUT });
+  };
+
+  // Clear error function
+  const clearError = () => {
+    dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
+  };
+
+  // Verify token and get user data
+  const verifyToken = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+      return;
+    }
+
+    //verify token
+    const response = await apiCall(API_ENDPOINTS.VERIFY, {
+      method: "GET",
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    const { user } = response;
+
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user, token },
+    });
+  }, [apiCall]);
+
+  // Update user profile
+  const updateProfile = async (userData) => {
+    console.log("userData", userData);
+    const response = await apiCall(API_ENDPOINTS.UPDATE_PROFILE, {
+      method: "PUT",
+      body: JSON.stringify(userData),
+    }).catch((error) => {
+      return { success: false, error: error.message };
+    });
+
+    if (response.success === false) {
+      return response;
+    }
+
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user: response.user, token: state.token },
+    });
+
+    return { success: true, user: response.user };
+  };
+
+  const getProfileByUserId = useCallback(
+    async (userId) => {
+      const response = await apiCall(
+        `${API_ENDPOINTS.GET_USER_PROFILE_BY_ID}${userId}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (response.success === false) {
+        return response;
+      }
+      console.log("response.user", response.user);
+      return response.user;
+    },
+    [apiCall]
+  );
+
+  // Effect to verify token on app load
+  useEffect(() => {
+    verifyToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
+  // Context value
+  const value = {
+    // State
+    user: state.user,
+    token: state.token,
+    isAuthenticated: state.isAuthenticated,
+    isLoading: state.isLoading,
+    error: state.error,
+
+    // Actions
+    login,
+    register,
+    logout,
+    clearError,
+    updateProfile,
+    apiCall,
+    googleLogin,
+    forgotPassword,
+    getProfileByUserId,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// Export AuthContext for advanced usage
+export default AuthContext;

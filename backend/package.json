@@ -6,24 +6,58 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./node_modules/jest/bin/jest.js --verbose --runInBand",
+    "test:list": "node ./node_modules/jest/bin/jest.js --listTests",
+    "test:config": "node ./node_modules/jest/bin/jest.js --showConfig",
+    "test:clear": "node ./node_modules/jest/bin/jest.js --clearCache"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^1.20.0",
     "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "google-auth-library": "^10.3.0",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.1",
-    "nanoid": "^5.1.5"
+    "nanoid": "^5.1.5",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.6"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96",
+    "@types/nanoid": "^2.1.0",
+    "@types/node": "^24.3.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "superagent": "^10.2.3",
+    "supertest": "^6.3.4",
+    "typescript": "^5.9.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test|Test).[jt]s?(x)"
+    ],
+    "roots": [
+      "<rootDir>",
+      "<rootDir>/controllers",
+      "<rootDir>/tests"
+    ]
   }
 }
