@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import Submission from "./components/Submission";
+import Submission from "./components/submission";
 import AuthLayout from "./pages/auth-pages/Authlayout";
 import MainLayout from "./pages/auth-pages/MainLayout";
 import WelcomePage from "./pages/auth-pages/WellcomePage";
